@@ -74,7 +74,7 @@ export function Navigation() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
               <Image
-                src="/images/logo.png"
+                src="/images/logoo.png"
                 alt="PejuangKorea Logo"
                 width={40}
                 height={40}
