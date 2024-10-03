@@ -9,9 +9,9 @@ import { Button } from "@/components/ui/button"
 export default async function ModulePage({ params }: { params: { courseId: string, moduleId: string } }) {
   const user = await currentUser()
   const course = await getCourse(parseInt(params.courseId))
-  const module = await getModule(parseInt(params.moduleId))
+  const moduleData = await getModule(parseInt(params.moduleId))
 
-  if (!course || !module) {
+  if (!course || !moduleData) {
     notFound()
   }
 
@@ -21,10 +21,10 @@ export default async function ModulePage({ params }: { params: { courseId: strin
       
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle className="text-3xl">{module.title}</CardTitle>
+          <CardTitle className="text-3xl">{moduleData.title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground mb-4">{module.description}</p>
+          <p className="text-muted-foreground mb-4">{moduleData.description}</p>
           <div className="mb-6">
             <p className="text-sm font-medium">Course</p>
             <p className="text-muted-foreground">{course.title}</p>

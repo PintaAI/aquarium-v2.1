@@ -12,7 +12,7 @@ const testimonials = [
   {
     name: "Jane Smith",
     role: "Designer, CreativeCo",
-    content: "I've never used a more intuitive and powerful tool. It's a game-changer!",
+    content: "I&apos;ve never used a more intuitive and powerful tool. It&apos;s a game-changer!",
     avatar: "/avatars/jane-smith.png"
   },
   {
@@ -32,7 +32,7 @@ const TestimonialSection = () => {
           {testimonials.map((testimonial, index) => (
             <Card key={index} className="flex flex-col justify-between">
               <CardContent className="pt-6">
-                <p className="mb-4">"{testimonial.content}"</p>
+                <p className="mb-4">&quot;{testimonial.content}&quot;</p>
                 <div className="flex items-center">
                   <Avatar className="h-10 w-10 mr-4">
                     <AvatarImage src={testimonial.avatar} alt={testimonial.name} />

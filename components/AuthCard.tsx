@@ -28,7 +28,7 @@ function SubmitButton({ isLogin }: { isLogin: boolean }) {
 }
 
 const AuthCard = ({ mode = 'login' }: AuthCardProps) => {
-  const [isLogin, setIsLogin] = useState(mode === 'login');
+  const [isLogin] = useState(mode === 'login');
   const [role, setRole] = useState<UserRoles>(UserRoles.MURID);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);

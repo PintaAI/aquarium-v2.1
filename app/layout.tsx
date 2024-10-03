@@ -3,7 +3,6 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
-import { Navigation } from "@/components/Navigation";
 import { Outfit } from 'next/font/google';
 
 const outfit = Outfit({
