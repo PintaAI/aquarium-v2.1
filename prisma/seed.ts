@@ -1,58 +1,142 @@
 import { PrismaClient } from '@prisma/client';
+import { hash } from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // Create sample users
-  const user1 = await prisma.user.create({
+  // Create Users
+  const student = await prisma.user.create({
     data: {
-      email: 'user1@example.com',
-      name: 'User One',
+      email: 'student@example.com',
+      name: 'Korean Learner',
       role: 'MURID',
       plan: 'FREE',
-      password: 'password123',
+      password: await hash('password123', 12),
     },
   });
 
-  const user2 = await prisma.user.create({
+  const teacher = await prisma.user.create({
     data: {
-      email: 'guru1@example.com',
-      name: 'Guru One',
+      email: 'teacher@example.com',
+      name: 'Korean Teacher',
       role: 'GURU',
       plan: 'PREMIUM',
-      password: 'password456',
+      password: await hash('password456', 12),
     },
   });
 
-  // Create sample courses
-  const course1 = await prisma.course.create({
+  // Create Testimonials
+  await prisma.testimonial.createMany({
+    data: [
+      {
+        name: 'Park Min-young',
+        role: 'Student',
+        content: '이 플랫폼 덕분에 한국어 실력이 크게 향상되었어요!',
+        imageUrl: 'https://example.com/minyoung.jpg',
+      },
+      {
+        name: 'Kim Soo-hyun',
+        role: 'Language Enthusiast',
+        content: 'The interactive lessons make learning Korean fun and engaging!',
+        imageUrl: 'https://example.com/soohyun.jpg',
+      },
+    ],
+  });
+
+  // Create Courses
+  const beginnerCourse = await prisma.course.create({
     data: {
-      title: 'Introduction to Aquariums',
-      description: 'A beginner course on setting up and maintaining aquariums.',
-      jsonDescription: '{}',
-      htmlDescription: '<p>A beginner course on setting up and maintaining aquariums.</p>',
+      title: 'Korean for Beginners',
+      description: 'Start your journey in Korean language',
       level: 'BEGINNER',
-      authorId: user2.id,
+      authorId: teacher.id,
+      members: {
+        connect: { id: student.id },
+      },
     },
   });
 
-  // Create sample testimonials
-  await prisma.testimonial.create({
+  const intermediateCourse = await prisma.course.create({
     data: {
-      name: 'Happy Customer',
-      role: 'Aquarium Enthusiast',
-      content: 'This course transformed my aquarium setup!',
-      imageUrl: 'https://example.com/image.jpg',
+      title: 'Intermediate Korean Conversation',
+      description: 'Enhance your Korean speaking skills',
+      level: 'INTERMEDIATE',
+      authorId: teacher.id,
     },
   });
 
-  console.log('Database has been seeded. 🌱');
+  // Create Modules
+  await prisma.module.createMany({
+    data: [
+      {
+        title: 'Hangul Basics',
+        description: 'Learn the Korean alphabet',
+        jsonDescription: JSON.stringify({ content: 'Master the fundamentals of Hangul' }),
+        htmlDescription: '<p>Master the fundamentals of Hangul</p>',
+        order: 1,
+        courseId: beginnerCourse.id,
+      },
+      {
+        title: 'Basic Greetings',
+        description: 'Common Korean greetings and introductions',
+        jsonDescription: JSON.stringify({ content: 'Learn essential Korean greetings' }),
+        htmlDescription: '<p>Learn essential Korean greetings</p>',
+        order: 2,
+        courseId: beginnerCourse.id,
+      },
+      {
+        title: 'Daily Conversations',
+        description: 'Practice everyday Korean conversations',
+        jsonDescription: JSON.stringify({ content: 'Improve your daily Korean conversation skills' }),
+        htmlDescription: '<p>Improve your daily Korean conversation skills</p>',
+        order: 1,
+        courseId: intermediateCourse.id,
+      },
+      {
+        title: 'Korean Idioms',
+        description: 'Learn common Korean idioms and expressions',
+        jsonDescription: JSON.stringify({ content: 'Master popular Korean idioms and their usage' }),
+        htmlDescription: '<p>Master popular Korean idioms and their usage</p>',
+        order: 2,
+        courseId: intermediateCourse.id,
+      },
+    ],
+  });
+
+  // Create Accounts (for OAuth)
+  await prisma.account.createMany({
+    data: [
+      {
+        userId: student.id,
+        type: 'oauth',
+        provider: 'google',
+        providerAccountId: '123456',
+        access_token: 'dummy_access_token_1',
+        expires_at: 1234567890,
+        token_type: 'Bearer',
+        scope: 'openid profile email',
+      },
+      {
+        userId: teacher.id,
+        type: 'oauth',
+        provider: 'github',
+        providerAccountId: '654321',
+        access_token: 'dummy_access_token_2',
+        expires_at: 1234567890,
+        token_type: 'Bearer',
+        scope: 'user',
+      },
+    ],
+  });
+
+  console.log('Seed data for Korean learning courses created successfully');
 }
 
 main()
-  .then(() => prisma.$disconnect())
-  .catch(e => {
+  .catch((e) => {
     console.error(e);
-    prisma.$disconnect();
     process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
   });

@@ -3,14 +3,13 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
-import { Outfit } from 'next/font/google';
 import { Navigation } from "@/components/Navigation";
+import { Outfit } from 'next/font/google';
 
 const outfit = Outfit({
   subsets: ['latin'],
   variable: '--font-outfit',
   display: 'swap',
-  weight: ['300', '400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
@@ -26,13 +25,11 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${outfit.variable} font-outfit antialiased`}
-      >
+      <body className={`${outfit.variable} font-sans antialiased`}>
         <SessionProvider session={session}>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-            <div className="min-h-screen flex flex-col bg-background text-foreground">
-              <Navigation />
+            <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/30 via-background to-secondary/30 text-foreground">
+              
               <main className="flex-grow">
                 {children}
               </main>

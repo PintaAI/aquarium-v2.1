@@ -1,57 +1,36 @@
-'use client'
+import { redirect } from 'next/navigation'
+import { currentUser } from "@/lib/auth"
 
-import { UseCurrentUser } from "@/hooks/use-current-user"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-
-export default function ProfilePage() {
-  const user = UseCurrentUser()
+export default async function ProfilePage() {
+  const user = await currentUser()
 
   if (!user) {
-    return <div className="container mx-auto py-10">Loading...</div>
+    redirect('/auth/signin')
   }
 
   return (
-    <div className="container mx-auto py-10">
-      <Card>
-        <CardHeader>
-          <CardTitle>User Profile</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4">
-            {user.id && (
-              <div>
-                <Label>User ID</Label>
-                <p>{user.id}</p>
-              </div>
-            )}
-            {user.name && (
-              <div>
-                <Label>Name</Label>
-                <p>{user.name}</p>
-              </div>
-            )}
-            {user.email && (
-              <div>
-                <Label>Email</Label>
-                <p>{user.email}</p>
-              </div>
-            )}
-            {user.role && (
-              <div>
-                <Label>Role</Label>
-                <p>{user.role}</p>
-              </div>
-            )}
-            {user.plan && (
-              <div>
-                <Label>Plan</Label>
-                <p>{user.plan}</p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">User Profile</h1>
+      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+            Name
+          </label>
+          <p className="text-gray-900" id="name">{user.name}</p>
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+            Email
+          </label>
+          <p className="text-gray-900" id="email">{user.email}</p>
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="role">
+            Role
+          </label>
+          <p className="text-gray-900" id="role">{user.role}</p>
+        </div>
+      </div>
     </div>
   )
 }

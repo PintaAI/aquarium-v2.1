@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useFormStatus } from 'react-dom';
+import Image from 'next/image';
 import { Button } from './ui/button';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from './ui/select';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './ui/card';
@@ -100,6 +101,16 @@ const AuthCard = ({ mode = 'login' }: AuthCardProps) => {
     >
       <Card className="w-full shadow-lg">
         <CardHeader className="space-y-1">
+          <div className="flex justify-center items-center mb-4">
+            <Image
+              src="/images/logo.png"
+              alt="PejuangKorea Logo"
+              width={40}
+              height={40}
+              className="mr-2"
+            />
+            <span className="text-xl font-bold">PejuangKorea Academy</span>
+          </div>
           <CardTitle className="text-2xl font-bold text-center">{isLogin ? 'Login' : 'Register'}</CardTitle>
           <CardDescription className="text-center">{isLogin ? 'Sign in to your account' : 'Create a new account'}</CardDescription>
         </CardHeader>

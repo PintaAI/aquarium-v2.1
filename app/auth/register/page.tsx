@@ -14,7 +14,7 @@ const WebsiteInfo = () => (
     <h2 className="text-3xl font-bold mb-6 text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
       Temukan Peluang di Korea
     </h2>
-    <p className="text-gray-200 text-lg mb-6 leading-relaxed">
+    <p className="text-foreground text-lg mb-6 leading-relaxed">
       Buka pintu kesempatan untuk bekerja dan tinggal di Korea. Kami menyediakan kursus bahasa Korea, komunitas supportif, dan panduan kerja lengkap untuk membantu Anda mencapai impian.
     </p>
     <div className="space-y-6">
@@ -52,8 +52,8 @@ const FeatureItem: React.FC<FeatureItemProps> = ({ icon, title, description }) =
   <div className="flex items-start space-x-4">
     {icon}
     <div>
-      <h3 className="text-xl font-semibold text-primary mb-1">{title}</h3>
-      <p className="text-gray-300">{description}</p>
+      <h3 className="text-xl font-semibold text-foreground/90 dark:text-foreground/80 mb-1">{title}</h3>
+      <p className="text-foreground/70 dark:text-foreground/60">{description}</p>
     </div>
   </div>
 );

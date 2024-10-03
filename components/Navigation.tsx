@@ -1,8 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { useState, useEffect } from "react"
 import Link from 'next/link'
+import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 import { signOut } from "next-auth/react"
 import { UseCurrentUser } from "@/hooks/use-current-user"
 import { Button } from "@/components/ui/button"
@@ -18,17 +19,32 @@ import { Menu, User, LogOut, GraduationCapIcon } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
 
+interface NavLinkProps {
+  href: string;
+  children: React.ReactNode;
+}
+
+const NavLink: React.FC<NavLinkProps> = ({ href, children }) => {
+  const pathname = usePathname()
+  const isActive = pathname === href
+
+  return (
+    <Link href={href} passHref>
+      <Button 
+        variant="ghost" 
+        className={cn(
+          isActive && "bg-accent text-accent-foreground",
+          "transition-colors hover:bg-accent hover:text-accent-foreground"
+        )}
+      >
+        {children}
+      </Button>
+    </Link>
+  )
+}
+
 export function Navigation() {
   const user = UseCurrentUser()
-  const [isScrolled, setIsScrolled] = useState(false)
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
 
   const handleLogout = () => {
     signOut()
@@ -36,15 +52,9 @@ export function Navigation() {
 
   const NavItems = () => (
     <>
-      <Link href="/" passHref>
-        <Button variant="ghost">Home</Button>
-      </Link>
-      <Link href="/courses" passHref>
-        <Button variant="ghost">Courses</Button>
-      </Link>
-      <Link href="/community" passHref>
-        <Button variant="ghost">Community</Button>
-      </Link>
+      <NavLink href="/">Home</NavLink>
+      <NavLink href="/courses">Kursus</NavLink>
+      <NavLink href="/community">komunitas</NavLink>
     </>
   )
 
@@ -58,17 +68,19 @@ export function Navigation() {
   )
 
   return (
-    <nav className={cn(
-      "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-      isScrolled
-        ? "bg-background/80 backdrop-blur-md shadow-md"
-        : "bg-transparent"
-    )}>
+    <nav className="fixed top-0 left-0 right-0 z-50 dark:bg-black/60 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Link href="/" className="text-2xl font-bold text-foreground">
-              PejuangKorea
+            <Link href="/" className="flex items-center">
+              <Image
+                src="/images/logo.png"
+                alt="PejuangKorea Logo"
+                width={40}
+                height={40}
+                className="mr-2"
+              />
+              <span className="text-2xl font-bold text-foreground">PejuangKorea</span>
             </Link>
           </div>
           <div className="hidden md:flex items-center space-x-4">
@@ -118,6 +130,16 @@ export function Navigation() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <div className="flex items-center mb-6">
+                  <Image
+                    src="/images/logo.png"
+                    alt="PejuangKorea Logo"
+                    width={32}
+                    height={32}
+                    className="mr-2"
+                  />
+                  <span className="text-xl font-bold text-foreground">PejuangKorea</span>
+                </div>
                 <nav className="flex flex-col space-y-4">
                   <NavItems />
                   {user ? (
