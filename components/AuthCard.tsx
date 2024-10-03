@@ -104,8 +104,12 @@ const AuthCard = ({ mode = 'login' }: AuthCardProps) => {
           setTimeout(() => router.push('/auth/sign-in'), 2000);
         }
       }
-    } catch (error) {
-      setError('An unexpected error occurred. Please try again.');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
