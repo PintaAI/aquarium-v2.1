@@ -32,7 +32,7 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
             <div className="min-h-screen flex flex-col bg-background text-foreground">
-              <Navigation />
+              
               <main className="flex-grow">
                 {children}
               </main>

@@ -14,7 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Menu, User, LogOut, GraduationCapIcon } from "lucide-react"
+import { Menu, User, LogOut, GraduationCapIcon, Search } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
 
@@ -41,6 +41,12 @@ export function Navigation() {
       </Link>
       <Link href="/courses" passHref>
         <Button variant="ghost">Courses</Button>
+      </Link>
+      <Link href="/courses/explore" passHref>
+        <Button variant="ghost">
+          <Search className="mr-2 h-4 w-4" />
+          Explore Courses
+        </Button>
       </Link>
       <Link href="/community" passHref>
         <Button variant="ghost">Community</Button>

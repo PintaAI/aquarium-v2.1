@@ -1,5 +1,5 @@
 /**
- * Rute yang dapat diakses oleh pengguna yang tidak masuk log.
+ * Routes that can be accessed by users who are not logged in.
  * @type {string[]}
  */
 export const publicRoutes = [
@@ -7,10 +7,12 @@ export const publicRoutes = [
   "/api/uploadthing",
   "/api/testimonials",
   "/courses",
+  "/courses/explore",
+  "/courses/[id]",
 ];
 
 /**
-* Rute yang dapat diakses oleh pengguna yang masuk log.
+* Routes that can be accessed by users who are logged in.
 * @type {string[]}
 */
 export const authRoutes = [
@@ -21,13 +23,13 @@ export const authRoutes = [
 ];
 
 /**
-* Awalan untuk rute yang ada di API.
+* Prefix for API routes.
 * @type {string}
 */
 export const apiAuthPrefix = "/api/auth";
 
 /**
-* URL pengalihan default ketika pengguna berhasil masuk log.
+* Default redirect URL when a user successfully logs in.
 * @type {string}
 */
 export const DEFAULT_REDIRECT_URL = "/";
