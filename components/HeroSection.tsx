@@ -25,8 +25,8 @@ const HeroSection = () => {
           <Image
             src="/images/circle-logo.png"
             alt="PejuangKorea Academy Logo"
-            width={300}
-            height={300}
+            width={250}
+            height={250}
             className="mx-auto"
           />
         </motion.div>

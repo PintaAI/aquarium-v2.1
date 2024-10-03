@@ -13,16 +13,24 @@ import { motion } from 'framer-motion';
 import { login } from '@/actions/login';
 import { register } from '@/actions/register';
 import { UserRoles } from '@prisma/client';
+import { Loader2 } from 'lucide-react';
 
 interface AuthCardProps {
   mode?: 'login' | 'register';
 }
 
-function SubmitButton({ isLogin }: { isLogin: boolean }) {
+function SubmitButton({ isLogin, isLoading }: { isLogin: boolean; isLoading: boolean }) {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={pending}>
-      {pending ? 'Submitting...' : isLogin ? 'Sign In' : 'Register'}
+    <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={pending || isLoading}>
+      {isLoading ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          {isLogin ? 'Signing In...' : 'Registering...'}
+        </>
+      ) : (
+        <>{isLogin ? 'Sign In' : 'Register'}</>
+      )}
     </Button>
   );
 }
@@ -32,6 +40,7 @@ const AuthCard = ({ mode = 'login' }: AuthCardProps) => {
   const [role, setRole] = useState<UserRoles>(UserRoles.MURID);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleGoogleAuth = () => {
@@ -51,6 +60,7 @@ const AuthCard = ({ mode = 'login' }: AuthCardProps) => {
     event.preventDefault();
     setError(null);
     setSuccess(null);
+    setIsLoading(true);
 
     const formData = new FormData(event.currentTarget);
     const email = formData.get('email');
@@ -58,38 +68,46 @@ const AuthCard = ({ mode = 'login' }: AuthCardProps) => {
 
     if (typeof email !== 'string' || typeof password !== 'string') {
       setError('Invalid email or password');
+      setIsLoading(false);
       return;
     }
 
-    if (isLogin) {
-      const result = await login({ email, password });
+    try {
+      if (isLogin) {
+        const result = await login({ email, password });
 
-      if ('error' in result) {
-        setError(result.error || 'An unexpected error occurred during login');
-      } else if ('success' in result) {
-        setSuccess(result.success);
-        if (result.shouldRefresh) {
-          // Refresh the page to update the session
-          window.location.href = result.redirectTo || '/';
-        } else if (result.redirectTo) {
-          router.push(result.redirectTo);
+        if ('error' in result) {
+          setError(result.error || 'An unexpected error occurred during login');
+        } else if ('success' in result) {
+          setSuccess(result.success);
+          if (result.shouldRefresh) {
+            // Refresh the page to update the session
+            window.location.href = result.redirectTo || '/';
+          } else if (result.redirectTo) {
+            router.push(result.redirectTo);
+          }
+        }
+      } else {
+        const name = formData.get('name');
+        if (typeof name !== 'string') {
+          setError('Invalid name');
+          setIsLoading(false);
+          return;
+        }
+
+        const result = await register({ email, password, name, role });
+
+        if ('error' in result) {
+          setError(typeof result.error === 'string' ? result.error : 'An unexpected error occurred during registration');
+        } else {
+          setSuccess('Registration successful. Please sign in.');
+          setTimeout(() => router.push('/auth/sign-in'), 2000);
         }
       }
-    } else {
-      const name = formData.get('name');
-      if (typeof name !== 'string') {
-        setError('Invalid name');
-        return;
-      }
-
-      const result = await register({ email, password, name, role });
-
-      if ('error' in result) {
-        setError(typeof result.error === 'string' ? result.error : 'An unexpected error occurred during registration');
-      } else {
-        setSuccess('Registration successful. Please sign in.');
-        setTimeout(() => router.push('/auth/sign-in'), 2000);
-      }
+    } catch (error) {
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -101,18 +119,18 @@ const AuthCard = ({ mode = 'login' }: AuthCardProps) => {
     >
       <Card className="w-full shadow-lg">
         <CardHeader className="space-y-1">
-          <div className="flex justify-center items-center mb-4">
+          <div className="flex justify-center items-center mb-2">
             <Image
               src="/images/logoo.png"
               alt="PejuangKorea Logo"
-              width={40}
-              height={40}
-              className="mr-2"
+              width={60}
+              height={60}
+              className=""
             />
-            <span className="text-xl font-bold">PejuangKorea Academy</span>
+            <span className="text-2xl font-bold">PejuangKorea Academy</span>
           </div>
           <CardTitle className="text-2xl font-bold text-center">{isLogin ? 'Login' : 'Register'}</CardTitle>
-          <CardDescription className="text-center">{isLogin ? 'Sign in to your account' : 'Create a new account'}</CardDescription>
+          <CardDescription className="text-center">{isLogin ? 'Sign in to your account' : 'Silahkan daftarkan akun anda'}</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -164,19 +182,20 @@ const AuthCard = ({ mode = 'login' }: AuthCardProps) => {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <SubmitButton isLogin={isLogin} />
+            <SubmitButton isLogin={isLogin} isLoading={isLoading} />
             {error && <p className="text-red-500">{error}</p>}
             {success && <p className="text-green-500">{success}</p>}
-            <Button onClick={handleGoogleAuth} type="button" variant="outline" className="w-full">
+            <Button onClick={handleGoogleAuth} type="button" variant="outline" className="w-full" disabled={isLoading}>
               <FaGoogle className="mr-2" />
               {isLogin ? 'Sign in' : 'Register'} with Google
             </Button>
             <p className="text-sm text-center text-muted-foreground">
-              {isLogin ? "Don't have an account? " : "Already have an account? "}
+              {isLogin ? "Belum daftar? " : "Sudah mempunyai akun? "}
               <button
                 onClick={handleModeSwitch}
                 type="button"
                 className="text-primary hover:underline font-medium"
+                disabled={isLoading}
               >
                 {isLogin ? 'Register' : 'Login'}
               </button>

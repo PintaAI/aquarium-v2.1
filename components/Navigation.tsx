@@ -132,7 +132,7 @@ export function Navigation() {
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
                 <div className="flex items-center mb-6">
                   <Image
-                    src="/images/logo.png"
+                    src="/images/logoo.png"
                     alt="PejuangKorea Logo"
                     width={32}
                     height={32}
