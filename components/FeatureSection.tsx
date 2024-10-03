@@ -14,7 +14,7 @@ export function FeatureSection() {
           >
             <div className="max-w-xs">
               <h2 className="text-left text-balance text-base md:text-xl lg:text-3xl font-semibold tracking-[-0.015em] text-primary-foreground">
-                Kursus Bahasa Korea
+                Kursus Bahasa Koreaa
               </h2>
               <p className="mt-4 text-left text-base/6 text-primary-foreground/80">
                 Pelajari bahasa Korea dari dasar hingga mahir dengan instruktur berpengalaman.
