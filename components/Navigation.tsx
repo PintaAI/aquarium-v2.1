@@ -80,7 +80,7 @@ export function Navigation() {
                 height={40}
                 className="mr-2"
               />
-              <span className="text-2xl font-bold text-foreground">PejuangKorea</span>
+              <span className="md:text-2xl font-bold text-foreground">Pejuangkorea Academy</span>
             </Link>
           </div>
           <div className="hidden md:flex items-center space-x-4">

@@ -15,6 +15,9 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "PejuangKorea",
   description: "Learn Korean language and culture",
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default async function RootLayout({
@@ -29,7 +32,6 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
             <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/30 via-background to-secondary/30 text-foreground">
-              
               <main className="flex-grow">
                 {children}
               </main>
