@@ -1,41 +1,60 @@
-import React from 'react';
+"use client"
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const testimonials = [
-  {
-    name: "John Doe",
-    role: "CEO, TechCorp",
-    content: "This product has revolutionized our workflow. Highly recommended!",
-    avatar: "/avatars/john-doe.png"
-  },
-  {
-    name: "Jane Smith",
-    role: "Designer, CreativeCo",
-    content: "I&apos;ve never used a more intuitive and powerful tool. It&apos;s a game-changer!",
-    avatar: "/avatars/jane-smith.png"
-  },
-  {
-    name: "Mike Johnson",
-    role: "Developer, CodeMasters",
-    content: "The features and support are unparalleled. This is a must-have for any serious professional.",
-    avatar: "/avatars/mike-johnson.png"
-  }
-];
+interface Testimonial {
+  id: number;
+  name: string;
+  role: string;
+  content: string;
+  imageUrl: string | null;
+}
 
 const TestimonialSection = () => {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const response = await fetch('/api/testimonials');
+        if (!response.ok) {
+          throw new Error('Failed to fetch testimonials');
+        }
+        const data = await response.json();
+        setTestimonials(data);
+        setIsLoading(false);
+      } catch (err) {
+        setError('Failed to load testimonials. Please try again later.');
+        setIsLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
+
+  if (isLoading) {
+    return <div className="text-center py-20">Loading testimonials...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center py-20 text-red-500">{error}</div>;
+  }
+
   return (
     <section className="py-20">
       <div className="container mx-auto">
         <h2 className="text-3xl font-bold text-center mb-12">What Our Customers Say</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <Card key={index} className="flex flex-col justify-between">
+          {testimonials.map((testimonial) => (
+            <Card key={testimonial.id} className="flex flex-col justify-between">
               <CardContent className="pt-6">
                 <p className="mb-4">&quot;{testimonial.content}&quot;</p>
                 <div className="flex items-center">
                   <Avatar className="h-10 w-10 mr-4">
-                    <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
+                    <AvatarImage src={testimonial.imageUrl || undefined} alt={testimonial.name} />
                     <AvatarFallback>{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                   </Avatar>
                   <div>

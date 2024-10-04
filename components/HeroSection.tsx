@@ -1,12 +1,25 @@
 "use client";
 import React from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { BackgroundLines } from "@/components/ui/background-lines";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 
 const HeroSection = () => {
+  const router = useRouter();
+
+  const handleStartCourse = () => {
+    router.push('/courses');
+  };
+
+  const handleAboutUs = () => {
+    // You can implement this function to navigate to the About Us page
+    // For now, we'll just log a message
+    console.log('Navigate to About Us page');
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 w-full h-full">
@@ -57,10 +70,18 @@ const HeroSection = () => {
             containerClassName="rounded"
             as="button"
             className="dark:bg-secondary bg-white text-black dark:text-white flex items-center space-x-2"
+            onClick={handleStartCourse}
           >
             <span>Mulai Kursus</span>
           </HoverBorderGradient>
-          <Button size="lg" variant="outline" className="px-8 py-6 text-lg">Tentang Kami</Button>
+          <Button 
+            size="lg" 
+            variant="outline" 
+            className="px-8 py-6 text-lg"
+            onClick={handleAboutUs}
+          >
+            Tentang Kami
+          </Button>
         </motion.div>
       </div>
     </section>
