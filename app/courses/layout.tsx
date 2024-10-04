@@ -1,5 +1,5 @@
 import React from 'react';
-import Sidebar from '../../components/ui/Sidebar';
+import Sidebar from '@/components/ui/Sidebar';
 
 export default function CourseLayout({
   children,
@@ -9,7 +9,7 @@ export default function CourseLayout({
   return (
     <div className="flex h-screen">
       <Sidebar />
-      <main className="flex-1 p-4">
+      <main className="flex-1 p-4 overflow-auto">
         {children}
       </main>
     </div>

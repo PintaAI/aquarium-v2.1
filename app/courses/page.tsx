@@ -1,9 +1,7 @@
-import { useState } from 'react'
 import Link from 'next/link'
 import { currentUser } from "@/lib/auth"
 import { getCourses } from "@/app/actions/get-courses"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { BookOpenIcon, PlusIcon, UserIcon, SearchIcon } from "lucide-react"
@@ -107,7 +105,7 @@ const CourseCard = ({ course }: { course: Course }) => (
       <img
         src="/images/course.jpg"
         alt={`${course.title} thumbnail`}
-        className="h-40 w-full object-cover"
+        className="h-40 w-full object-cover rounded-t-lg"
       />
       <CardContent className="flex flex-col justify-between p-4">
         <div>
