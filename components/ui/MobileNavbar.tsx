@@ -17,7 +17,6 @@ const MobileNavbar: React.FC<MobileNavbarProps> = ({ className }) => {
     { icon: Home, label: 'Home', href: '/' },
     { icon: Users, label: 'Community', href: '/community' },
     { icon: BookOpen, label: 'Courses', href: '/courses' },
-    { icon: UserCircle, label: 'Profile', href: '/profile' },
   ];
 
   return (
@@ -29,17 +28,19 @@ const MobileNavbar: React.FC<MobileNavbarProps> = ({ className }) => {
         {menuItems.map((item) => (
           <Link key={item.href} href={item.href} className="flex flex-col items-center">
             <item.icon className="h-6 w-6 text-muted-foreground" />
-            <span className="text-xs mt-1 text-muted-foreground">{item.label}</span>
           </Link>
         ))}
         <Link href="/profile" className="flex flex-col items-center">
-          <Avatar className="h-6 w-6">
-            <AvatarImage src={user?.image || ''} alt={user?.name || ''} />
-            <AvatarFallback>
-              {user?.name ? user.name[0].toUpperCase() : 'U'}
-            </AvatarFallback>
-          </Avatar>
-          <span className="text-xs mt-1 text-muted-foreground">Profile</span>
+          {user ? (
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={user.image || ''} alt={user.name || ''} />
+              <AvatarFallback>
+                {user.name ? user.name[0].toUpperCase() : 'U'}
+              </AvatarFallback>
+            </Avatar>
+          ) : (
+            <UserCircle className="h-6 w-6 text-muted-foreground" />
+          )}
         </Link>
       </div>
     </nav>

@@ -131,7 +131,7 @@ const AuthCard = ({ mode = 'login' }: AuthCardProps) => {
               height={60}
               className=""
             />
-            <span className="text-2xl font-bold">PejuangKorea Academy</span>
+          
           </div>
           <CardTitle className="text-2xl font-bold text-center">{isLogin ? 'Login' : 'Register'}</CardTitle>
           <CardDescription className="text-center">{isLogin ? 'Sign in to your account' : 'Silahkan daftarkan akun anda'}</CardDescription>
