@@ -52,7 +52,7 @@ const AuthCard = ({ mode = 'login' }: AuthCardProps) => {
     if (isLogin) {
       router.push('/auth/register');
     } else {
-      router.push('/auth/sign-in');
+      router.push('/auth/login');
     }
   };
 

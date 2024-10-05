@@ -18,6 +18,8 @@ import {
 import { Menu, User, LogOut, GraduationCapIcon } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
+import { Modal } from "@/components/ui/modal"
+import AuthCard from "@/components/AuthCard"
 
 interface NavLinkProps {
   href: string;
@@ -65,6 +67,15 @@ export function Navigation() {
         {user?.name ? user.name[0].toUpperCase() : 'U'}
       </AvatarFallback>
     </Avatar>
+  )
+
+  const LoginModal = () => (
+    <Modal
+      trigger={<Button variant="default">Login</Button>}
+      className="sm:max-w-[400px]"
+    >
+      <AuthCard />
+    </Modal>
   )
 
   return (
@@ -115,9 +126,7 @@ export function Navigation() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link href="/auth/login" passHref>
-                <Button variant="default">Login</Button>
-              </Link>
+              <LoginModal />
             )}
             <ThemeToggle />
           </div>
@@ -161,9 +170,7 @@ export function Navigation() {
                         )}
                       </>
                     ) : (
-                      <Link href="/auth/login" passHref>
-                        <Button variant="default" className="w-full">Login</Button>
-                      </Link>
+                      <LoginModal />
                     )}
                   </nav>
                   {user && (
