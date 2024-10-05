@@ -53,16 +53,22 @@ const Sidebar: React.FC = () => {
         <Link href="/">
           {!isCollapsed && (
             <Image
-              src="/images/logoo.png"
+              src="/images/logo-text.png"
               alt="Logo"
-              width={50}
-              height={50}
-              className="rounded-lg border cursor-pointer"
+              width={250}
+              height={100}
+              className="rounded-lg cursor-pointer"
             />
           )}
         </Link>
         <Button variant="ghost" size="icon" onClick={toggleSidebar}>
-          {isCollapsed ? <Menu /> : <ChevronsLeft />}
+          {isCollapsed ?             <Image
+              src="/images/logoo.png"
+              alt="Logo"
+              width={60}
+              height={60}
+              className="rounded-lg cursor-pointer"
+            /> : <ChevronsLeft />}
         </Button>
       </div>
 
