@@ -34,7 +34,7 @@ const NavLink: React.FC<NavLinkProps> = ({ href, children }) => {
         variant="ghost" 
         className={cn(
           isActive && "bg-accent text-accent-foreground",
-          "transition-colors hover:bg-accent hover:text-accent-foreground"
+          "transition-colors hover:bg-accent hover:text-accent-foreground w-full justify-start"
         )}
       >
         {children}
@@ -80,7 +80,7 @@ export function Navigation() {
                 height={40}
                 className="mr-2"
               />
-              <span className="md:text-2xl font-bold text-foreground">Pejuangkorea Academy</span>
+              <span className="text-xl md:text-2xl font-bold text-foreground">Pejuangkorea</span>
             </Link>
           </div>
           <div className="hidden md:flex items-center space-x-4">
@@ -130,45 +130,49 @@ export function Navigation() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                <div className="flex items-center mb-6">
-                  <Image
-                    src="/images/logoo.png"
-                    alt="PejuangKorea Logo"
-                    width={32}
-                    height={32}
-                    className="mr-2"
-                  />
-                  <span className="text-xl font-bold text-foreground">PejuangKorea</span>
-                </div>
-                <nav className="flex flex-col space-y-4">
-                  <NavItems />
-                  {user ? (
-                    <>
-                      <Link href="/profile" passHref>
-                        <Button variant="ghost" className="justify-start">
-                          <User className="mr-2 h-4 w-4" />
-                          Profile
-                        </Button>
-                      </Link>
-                      {user.role === 'GURU' && (
-                        <Link href="/courses/manage" passHref>
-                          <Button variant="ghost" className="justify-start">
-                            <GraduationCapIcon className="mr-2 h-4 w-4" />
-                            Manage Courses
+                <div className="flex flex-col h-full">
+                  <div className="flex items-center mb-6">
+                    <Image
+                      src="/images/logoo.png"
+                      alt="PejuangKorea Logo"
+                      width={32}
+                      height={32}
+                      className="mr-2"
+                    />
+                    <span className="text-xl font-bold text-foreground">PejuangKorea</span>
+                  </div>
+                  <nav className="flex flex-col space-y-4 flex-grow">
+                    <NavItems />
+                    {user ? (
+                      <>
+                        <Link href="/profile" passHref>
+                          <Button variant="ghost" className="justify-start w-full">
+                            <User className="mr-2 h-4 w-4" />
+                            Profile
                           </Button>
                         </Link>
-                      )}
-                      <Button variant="ghost" className="justify-start text-red-600 hover:bg-red-100 hover:text-red-600" onClick={handleLogout}>
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Log out
-                      </Button>
-                    </>
-                  ) : (
-                    <Link href="/auth/login" passHref>
-                      <Button variant="default">Login</Button>
-                    </Link>
+                        {user.role === 'GURU' && (
+                          <Link href="/courses/manage" passHref>
+                            <Button variant="ghost" className="justify-start w-full">
+                              <GraduationCapIcon className="mr-2 h-4 w-4" />
+                              Manage Courses
+                            </Button>
+                          </Link>
+                        )}
+                      </>
+                    ) : (
+                      <Link href="/auth/login" passHref>
+                        <Button variant="default" className="w-full">Login</Button>
+                      </Link>
+                    )}
+                  </nav>
+                  {user && (
+                    <Button variant="ghost" className="justify-start w-full text-red-600 hover:bg-red-100 hover:text-red-600 mt-auto" onClick={handleLogout}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Log out
+                    </Button>
                   )}
-                </nav>
+                </div>
               </SheetContent>
             </Sheet>
           </div>
