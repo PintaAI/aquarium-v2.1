@@ -21,10 +21,10 @@ const MobileNavbar: React.FC<MobileNavbarProps> = ({ className }) => {
 
   return (
     <nav className={cn(
-      "fixed bottom-0 left-0 right-0 bg-background border-t border-border",
+      "fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50",
       className
     )}>
-      <div className="flex justify-around items-center h-16">
+      <div className="flex justify-around items-center h-16 mb-5">
         {menuItems.map((item) => (
           <Link key={item.href} href={item.href} className="flex flex-col items-center">
             <item.icon className="h-6 w-6 text-muted-foreground" />

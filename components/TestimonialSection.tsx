@@ -50,14 +50,14 @@ const TestimonialSection = () => {
   return (
     <section className="py-16 bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">What Our Customers Say</h2>
+        <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">Testimoni</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {testimonials.map((testimonial) => (
-            <Card key={testimonial.id} className="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <Card key={testimonial.id} className="bg-white dark:bg-gray-700 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardContent className="p-6">
                 <p className="text-gray-600 dark:text-gray-300 mb-4">&quot;{testimonial.content}&quot;</p>
                 <div className="flex items-center">
-                  <Avatar className="h-10 w-10 mr-4">
+                  <Avatar className="h-10 w-10 mr-4 ">
                     <AvatarImage src={testimonial.imageUrl} alt={testimonial.name} />
                     <AvatarFallback>{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                   </Avatar>
