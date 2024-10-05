@@ -6,18 +6,16 @@ const nextConfig = {
   env: {
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   },
-  // Add this section to configure Auth.js
-  auth: {
-    trustHost: true,
-    providers: [],
-  },
 };
 
-const config = withPWA({
-  dest: 'public',
-  disable: false, // Enable PWA in both development and production
-  register: true,
-  skipWaiting: true,
-})(nextConfig);
+const isProd = process.env.NODE_ENV === 'production';
+
+const config = isProd
+  ? withPWA({
+      dest: 'public',
+      register: true,
+      skipWaiting: true,
+    })(nextConfig)
+  : nextConfig;
 
 export default config;

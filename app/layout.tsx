@@ -4,6 +4,8 @@ import { ThemeProvider } from "next-themes";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import { Outfit } from 'next/font/google';
+import Sidebar from "@/components/ui/Sidebar";
+import MobileNavbar from "@/components/ui/MobileNavbar";
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -54,9 +56,12 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
             <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/30 via-background to-secondary/30 text-foreground">
-              <main className="flex-grow">
-                {children}
-              </main>
+              <div className="flex flex-grow">   
+                <main className="flex-grow overflow-y-auto pb-16 md:pb-0">
+                  {children}
+                </main>
+              </div>
+              <MobileNavbar className="md:hidden" />
             </div>
           </ThemeProvider>
         </SessionProvider>

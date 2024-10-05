@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Menu, X, BookOpen, Home, Users, UserCircle, ChevronsLeft, GraduationCap, Compass, ChevronDown } from 'lucide-react';
+import { BookOpen, Home, Users, UserCircle, ChevronsLeft, GraduationCap, Compass, ChevronDown } from 'lucide-react';
 import { Button } from './button';
 import { ScrollArea } from './scroll-area';
 import { cn } from '@/lib/utils';
@@ -16,20 +16,14 @@ import {
   AccordionTrigger,
 } from "./accordion";
 
-const Sidebar: React.FC = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
+
+const Sidebar: React.FC<SidebarProps> = ({ className, ...props }) => {
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const user = UseCurrentUser();
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
-  const UserAvatar = () => (
-    <Avatar className="h-8 w-8">
-      <AvatarImage src={user?.image || ''} alt={user?.name || ''} />
-      <AvatarFallback>
-        {user?.name ? user.name[0].toUpperCase() : 'U'}
-      </AvatarFallback>
-    </Avatar>
-  );
 
   const menuItems = [
     { icon: Home, label: 'Home', href: '/' },
@@ -45,10 +39,14 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className={cn(
-      "bg-background p-4 transition-all duration-300 ease-in-out h-screen flex flex-col",
-      isCollapsed ? "w-16" : "w-64"
-    )}>
+    <aside
+      className={cn(
+        "bg-background p-4 transition-all duration-300 ease-in-out h-screen flex flex-col",
+        isCollapsed ? "w-16" : "w-64",
+        className
+      )}
+      {...props}
+    >
       <div className="flex items-center justify-between mb-6">
         <Link href="/">
           {!isCollapsed && (
@@ -62,23 +60,29 @@ const Sidebar: React.FC = () => {
           )}
         </Link>
         <Button variant="ghost" size="icon" onClick={toggleSidebar}>
-          {isCollapsed ?             <Image
+          {isCollapsed ? (
+            <Image
               src="/images/logoo.png"
               alt="Logo"
               width={60}
               height={60}
               className="rounded-lg cursor-pointer"
-            /> : <ChevronsLeft />}
+            />
+          ) : (
+            <ChevronsLeft />
+          )}
         </Button>
       </div>
 
       <ScrollArea className="flex-grow">
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion type="single" collapsible className="w-full" defaultValue="navigation">
           <AccordionItem value="navigation">
-            <AccordionTrigger className={cn(
-              "hover:no-underline flex items-center justify-between",
-              isCollapsed ? "px-2" : "px-4"
-            )}>
+            <AccordionTrigger
+              className={cn(
+                "hover:no-underline flex items-center justify-between",
+                isCollapsed ? "px-2" : "px-4"
+              )}
+            >
               <div className="flex items-center">
                 <Compass className={cn("h-5 w-5", isCollapsed ? "mr-0" : "mr-2")} />
                 {!isCollapsed && <span>Navigation</span>}
@@ -106,10 +110,12 @@ const Sidebar: React.FC = () => {
           </AccordionItem>
 
           <AccordionItem value="courses">
-            <AccordionTrigger className={cn(
-              "hover:no-underline flex items-center justify-between",
-              isCollapsed ? "px-2" : "px-4"
-            )}>
+            <AccordionTrigger
+              className={cn(
+                "hover:no-underline flex items-center justify-between",
+                isCollapsed ? "px-2" : "px-4"
+              )}
+            >
               <div className="flex items-center">
                 <BookOpen className={cn("h-5 w-5", isCollapsed ? "mr-0" : "mr-2")} />
                 {!isCollapsed && <span>Joined Courses</span>}
@@ -137,19 +143,6 @@ const Sidebar: React.FC = () => {
           </AccordionItem>
         </Accordion>
       </ScrollArea>
-
-      {isCollapsed ? (
-        <div className="flex flex-col items-center mt-4">
-          <Button variant="ghost" size="icon" className="mb-2">
-            <UserAvatar />
-          </Button>
-        </div>
-      ) : (
-        <div className="mt-4 flex items-center space-x-2">
-          <UserAvatar />
-          <span className="text-sm font-medium">{user?.name || 'User'}</span>
-        </div>
-      )}
     </aside>
   );
 };

@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { BookOpenIcon, PlusIcon, UserIcon, SearchIcon } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 type Course = {
   id: number
@@ -30,6 +31,15 @@ const getLevelColor = (level: string) => {
 
 export default async function CoursesPage() {
   const user = await currentUser()
+  const UserAvatar = () => (
+    <Avatar className="h-8 w-8">
+      <AvatarImage src={user?.image || ''} alt={user?.name || ''} />
+      <AvatarFallback>
+        {user?.name ? user.name[0].toUpperCase() : 'U'}
+      </AvatarFallback>
+    </Avatar>
+  );
+
   let courses: Course[] = []
   let error: string | null = null
 
@@ -44,8 +54,11 @@ export default async function CoursesPage() {
     <div className="container mx-auto px-4 py-8">
       <header className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Pejuangkorea Academy Courses</h1>
-        <p className="dark:text-gray-400">Discover your path to fluency in Korean language and culture</p>
-        {user && <p className="mt-2 text-sm text-gray-500">Welcome back, {user.name}</p>}
+        <p className="dark:text-gray-400">Temukan kursus yang paling cocok buat kamu</p>
+        {user &&         <div className="mt-4 flex items-center space-x-2">
+          <UserAvatar />
+          <span className="text-sm font-medium">Hi,👋 {user?.name || 'User'}</span>
+        </div>}
       </header>
 
       <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -78,7 +91,7 @@ const SearchComponent = () => (
   <div className="relative w-full sm:w-64">
     <Input
       type="text"
-      placeholder="Search courses..."
+      placeholder="Cari kursus di sini..."
       className="pl-10 pr-4 py-2 w-full"
     />
     <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
