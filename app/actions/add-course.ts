@@ -1,50 +1,47 @@
-"use server"
+'use server'
 
-import { db } from "@/lib/db"
-import { revalidatePath } from "next/cache"
-import { auth } from "@/auth"
+import { db } from '@/lib/db'
+import { CourseLevel } from '@prisma/client'
+import { revalidatePath } from 'next/cache'
+import { currentUser } from '@/lib/auth'
 
-interface AddCourseData {
-  courseTitle: string
-  courseDescription: string
-  moduleTitle: string
+interface AddCourseParams {
+  title: string
+  description: string
+  level: CourseLevel
+  jsonDescription: string
+  htmlDescription: string
 }
 
-export async function addCourse(data: AddCourseData) {
+export async function addCourse({
+  title,
+  description,
+  level,
+  jsonDescription,
+  htmlDescription,
+}: AddCourseParams) {
   try {
-    const { courseTitle, courseDescription, moduleTitle } = data
+    const user = await currentUser()
 
-    const session = await auth()
-    if (!session || !session.user || !session.user.id) {
-      throw new Error("User not authenticated")
+    if (!user || user.role !== 'GURU') {
+      throw new Error('Unauthorized')
     }
 
     const course = await db.course.create({
       data: {
-        title: courseTitle,
-        description: courseDescription,
-        level: "BEGINNER",
-        author: {
-          connect: { id: session.user.id }
-        },
-        modules: {
-          create: [
-            {
-              title: moduleTitle,
-              order: 1,
-              description: "",
-              jsonDescription: "",
-              htmlDescription: "",
-            },
-          ],
-        },
+        title,
+        description,
+        level,
+        jsonDescription,
+        htmlDescription,
+        authorId: user.id,
       },
     })
 
-    revalidatePath("/courses")
+    revalidatePath('/courses')
     return { success: true, courseId: course.id }
   } catch (error) {
-    console.error("Failed to add course:", error)
-    return { success: false, error: "Failed to add course. Please try again." }
+    console.error('Failed to add course:', error)
+    return { success: false, error: 'Failed to add course' }
   }
 }

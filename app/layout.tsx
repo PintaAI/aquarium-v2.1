@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import "./prosemirror.css"
 import { ThemeProvider } from "next-themes";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import { Outfit } from 'next/font/google';
-import Sidebar from "@/components/ui/Sidebar";
 import MobileNavbar from "@/components/ui/MobileNavbar";
 
 const outfit = Outfit({

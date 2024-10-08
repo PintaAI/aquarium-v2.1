@@ -9,7 +9,7 @@ export default function CourseLayout({
   return (
     <div className="flex h-screen">
        <Sidebar className="hidden md:block" />
-      <main className="flex-1 p-4 overflow-auto">
+      <main className="flex-1 overflow-auto">
         {children}
       </main>
     </div>

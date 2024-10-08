@@ -3,12 +3,11 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { BookOpen, Home, Users, UserCircle, ChevronsLeft, GraduationCap, Compass, ChevronDown } from 'lucide-react';
+import { BookOpen, Home, Users, UserCircle, ChevronsLeft, GraduationCap, Compass, ChevronDown, GamepadIcon } from 'lucide-react';
 import { Button } from './button';
 import { ScrollArea } from './scroll-area';
 import { cn } from '@/lib/utils';
 import { UseCurrentUser } from "@/hooks/use-current-user";
-import { Avatar, AvatarFallback, AvatarImage } from './avatar';
 import {
   Accordion,
   AccordionContent,
@@ -20,10 +19,10 @@ interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const Sidebar: React.FC<SidebarProps> = ({ className, ...props }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const [openItems, setOpenItems] = useState<string[]>(["navigation"]);
   const user = UseCurrentUser();
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
-
 
   const menuItems = [
     { icon: Home, label: 'Home', href: '/' },
@@ -31,11 +30,11 @@ const Sidebar: React.FC<SidebarProps> = ({ className, ...props }) => {
     { icon: UserCircle, label: 'Profile', href: '/profile' },
   ];
 
-  // Mock data for joined courses (replace with actual data fetching logic)
-  const joinedCourses = [
-    { id: '1', title: 'kursus 1' },
-    { id: '2', title: 'kursus 2' },
-    { id: '3', title: 'kursus 3' },
+  // Mock data for joined courses and mini-games (replace with actual data fetching logic)
+  const joinedItems = [
+    { id: '1', title: 'Course 1', type: 'course' },
+    { id: '2', title: 'Mini Game 1', type: 'game' },
+    { id: '3', title: 'Course 2', type: 'course' },
   ];
 
   return (
@@ -75,7 +74,12 @@ const Sidebar: React.FC<SidebarProps> = ({ className, ...props }) => {
       </div>
 
       <ScrollArea className="flex-grow">
-        <Accordion type="single" collapsible className="w-full" defaultValue="navigation">
+        <Accordion 
+          type="multiple" 
+          className="w-full" 
+          value={openItems}
+          onValueChange={setOpenItems}
+        >
           <AccordionItem value="navigation">
             <AccordionTrigger
               className={cn(
@@ -118,14 +122,26 @@ const Sidebar: React.FC<SidebarProps> = ({ className, ...props }) => {
             >
               <div className="flex items-center">
                 <BookOpen className={cn("h-5 w-5", isCollapsed ? "mr-0" : "mr-2")} />
-                {!isCollapsed && <span>Joined Courses</span>}
+                {!isCollapsed && <span>Courses</span>}
               </div>
               {!isCollapsed && <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />}
             </AccordionTrigger>
             <AccordionContent>
               <nav className="space-y-2">
-                {joinedCourses.map((course) => (
-                  <Link key={course.id} href={`/courses/${course.id}`}>
+                <Link href="/explore">
+                  <Button
+                    variant="ghost"
+                    className={cn(
+                      "w-full justify-start",
+                      isCollapsed ? "px-2" : "px-4"
+                    )}
+                  >
+                    <Compass className={cn("h-5 w-5", isCollapsed ? "mr-0" : "mr-2")} />
+                    {!isCollapsed && <span>Explore Courses</span>}
+                  </Button>
+                </Link>
+                {joinedItems.map((item) => (
+                  <Link key={item.id} href={`/courses/${item.id}`}>
                     <Button
                       variant="ghost"
                       className={cn(
@@ -133,8 +149,12 @@ const Sidebar: React.FC<SidebarProps> = ({ className, ...props }) => {
                         isCollapsed ? "px-2" : "px-4"
                       )}
                     >
-                      <GraduationCap className={cn("h-5 w-5", isCollapsed ? "mr-0" : "mr-2")} />
-                      {!isCollapsed && <span className="truncate">{course.title}</span>}
+                      {item.type === 'course' ? (
+                        <GraduationCap className={cn("h-5 w-5", isCollapsed ? "mr-0" : "mr-2")} />
+                      ) : (
+                        <GamepadIcon className={cn("h-5 w-5", isCollapsed ? "mr-0" : "mr-2")} />
+                      )}
+                      {!isCollapsed && <span className="truncate">{item.title}</span>}
                     </Button>
                   </Link>
                 ))}

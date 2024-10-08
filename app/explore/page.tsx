@@ -151,7 +151,7 @@ const CourseCard = ({ course }: { course: Course }) => (
 )
 
 const AddCourseCard = () => (
-  <Link href="/courses/create-course" passHref>
+  <Link href="/guru/add-course" passHref>
     <Card className="flex flex-col h-full items-center justify-center text-center p-6 transition-all duration-300 hover:shadow-md cursor-pointer transform hover:-translate-y-1 hover:scale-105">
       <PlusIcon className="h-12 w-12 text-gray-400 mb-4" aria-hidden="true" />
       <CardTitle className="text-lg font-semibold mb-2">Add New Course</CardTitle>

@@ -5,7 +5,19 @@ import { getCourse } from "@/app/actions/get-course"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { User, BarChart, Clock, ArrowLeft } from "lucide-react"
+import { User, BarChart, Clock, ArrowLeft, Plus } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+
+// Placeholder for AddModuleForm component
+const AddModuleForm = () => {
+  return (
+    <div>
+      <h3 className="text-lg font-medium mb-4">Add New Module</h3>
+      {/* Add form fields here */}
+      <Button>Add Module</Button>
+    </div>
+  )
+}
 
 export default async function CourseDetailPage({ params }: { params: { courseId: string } }) {
   const user = await currentUser()
@@ -14,6 +26,8 @@ export default async function CourseDetailPage({ params }: { params: { courseId:
   if (!course) {
     notFound()
   }
+
+  const isAuthor = user?.id === course.authorId
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl">
@@ -50,9 +64,38 @@ export default async function CourseDetailPage({ params }: { params: { courseId:
           <Button className="w-full">Start Course</Button>
         </CardContent>
       </Card>
+
+      {course.htmlDescription && (
+        <Card className="mb-12 shadow-sm hover:shadow-md transition-shadow duration-300">
+          <CardContent>
+            <div
+              className="prose prose-headings:font-title font-default mt-4 dark:prose-invert focus:outline-none"
+              dangerouslySetInnerHTML={{ __html: course.htmlDescription }}
+            ></div>
+          </CardContent>
+        </Card>
+      )}
       </div>
 
-      <h2 className="text-2xl font-bold mb-4">Course Modules</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">Course Modules</h2>
+        {isAuthor && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm" className="flex items-center">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Module
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New Module</DialogTitle>
+              </DialogHeader>
+              <AddModuleForm />
+            </DialogContent>
+          </Dialog>
+        )}
+      </div>
       <div className="space-y-4">
         {course.modules.map((module, index) => (
           <Card key={module.id} className="shadow-sm hover:shadow-md transition-shadow duration-300">
@@ -71,7 +114,6 @@ export default async function CourseDetailPage({ params }: { params: { courseId:
               <p className="text-sm text-muted-foreground">{module.description}</p>
             </CardContent>
           </Card>
-        
         ))}
       </div>
     </div>
