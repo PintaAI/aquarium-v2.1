@@ -32,7 +32,7 @@ interface CourseFormProps {
 export default function CourseForm({ username }: CourseFormProps) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [level, setLevel] = useState<CourseLevel>(CourseLevel.BEGINNER)
+  const [level, setLevel] = useState<CourseLevel>(CourseLevel.BEGINNER) // Default value
   const [jsonDescription, setJsonDescription] = useState<JSONContent>(defaultEditorValue)
   const [htmlDescription, setHtmlDescription] = useState('')
   const [pending, setPending] = useState(false)
@@ -47,11 +47,19 @@ export default function CourseForm({ username }: CourseFormProps) {
     setPending(true)
 
     try {
+      console.log({
+        title,
+        description,
+        level,
+        jsonDescription,
+        htmlDescription
+      })
+
       const result = await addCourse({
         title,
         description,
         level,
-        jsonDescription: JSON.stringify(jsonDescription),
+        jsonDescription: JSON.stringify(jsonDescription), // Convert to string
         htmlDescription,
       })
 
@@ -101,9 +109,9 @@ export default function CourseForm({ username }: CourseFormProps) {
                     <SelectValue placeholder="Select level" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={CourseLevel.BEGINNER}>Beginner</SelectItem>
-                    <SelectItem value={CourseLevel.INTERMEDIATE}>Intermediate</SelectItem>
-                    <SelectItem value={CourseLevel.ADVANCED}>Advanced</SelectItem>
+                    <SelectItem value="BEGINNER">Beginner</SelectItem>
+                    <SelectItem value="INTERMEDIATE">Intermediate</SelectItem>
+                    <SelectItem value="ADVANCED">Advanced</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -113,8 +121,8 @@ export default function CourseForm({ username }: CourseFormProps) {
               </div>
             </div>
             <Button onClick={handleSubmit} disabled={pending} className="w-full">
-        {pending ? 'Creating...' : 'Create Course'}
-      </Button>
+              {pending ? 'Creating...' : 'Create Course'}
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -124,13 +132,11 @@ export default function CourseForm({ username }: CourseFormProps) {
         <Editor
           initialValue={defaultEditorValue}
           onChange={(content) => {
-            setJsonDescription(content.json)
-            setHtmlDescription(content.html)
+            setJsonDescription(content.json) // Assuming content.json is JSONContent type
+            setHtmlDescription(content.html) // Assuming content.html is a string of HTML
           }}
         />
       </div>
-      
-
     </div>
   )
 }
