@@ -2,12 +2,19 @@
 
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
-import Editor from "@/components/editor/editor"
-import { JSONContent } from 'novel'
+import { useRouter } from 'next/navigation'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
+import { Textarea } from './ui/textarea'
 import { addModule } from '@/app/actions/add-module'
+import Editor from './editor/editor'
+import { JSONContent } from 'novel'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './ui/card'
+import { ScrollArea } from './ui/scroll-area'
+
+interface AddModuleFormProps {
+  courseId: number
+}
 
 const defaultEditorValue = {
   type: 'doc',
@@ -19,43 +26,17 @@ const defaultEditorValue = {
   ]
 }
 
-interface AddModuleFormProps {
-  courseId: number;
-  onSuccess?: () => void;
-}
-
-const MAX_TITLE_LENGTH = 100;
-const MAX_DESCRIPTION_LENGTH = 200;
-
-export default function AddModuleForm({ courseId, onSuccess }: AddModuleFormProps) {
+export default function AddModuleForm({ courseId }: AddModuleFormProps) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [jsonContent, setJsonContent] = useState<JSONContent>(defaultEditorValue)
   const [htmlContent, setHtmlContent] = useState('')
   const [pending, setPending] = useState(false)
-  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false)
+  const router = useRouter()
 
-  const resetForm = () => {
-    setTitle('')
-    setDescription('')
-    setJsonContent(defaultEditorValue)
-    setHtmlContent('')
-  }
-
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.length <= MAX_TITLE_LENGTH) {
-      setTitle(e.target.value)
-    }
-  }
-
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.length <= MAX_DESCRIPTION_LENGTH) {
-      setDescription(e.target.value)
-    }
-  }
-
-  async function handleSubmit() {
-    if (!title.trim() || !description.trim() || !htmlContent.trim()) {
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!title || !description || !jsonContent || !htmlContent) {
       toast.error('Please fill in all fields')
       return
     }
@@ -75,65 +56,70 @@ export default function AddModuleForm({ courseId, onSuccess }: AddModuleFormProp
         throw new Error(result.error || 'Failed to add module')
       }
 
-      resetForm()
-      if (onSuccess) {
-        onSuccess()
-      }
+      toast.success('Module added successfully')
+      router.refresh()
+      setTitle('')
+      setDescription('')
+      setJsonContent(defaultEditorValue)
+      setHtmlContent('')
     } catch (error) {
-      console.error('Error adding module:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to add module')
     } finally {
       setPending(false)
-      setIsConfirmDialogOpen(false)
     }
   }
 
   return (
-    <div className='mt-6 flex max-w-2xl flex-col gap-4'>
-      <Input
-        type='text'
-        placeholder='Module Title'
-        value={title}
-        onChange={handleTitleChange}
-        maxLength={MAX_TITLE_LENGTH}
-      />
-      <small className="text-muted-foreground">{title.length}/{MAX_TITLE_LENGTH}</small>
-      <Input
-        type='text'
-        placeholder='Short Description'
-        value={description}
-        onChange={handleDescriptionChange}
-        maxLength={MAX_DESCRIPTION_LENGTH}
-      />
-      <small className="text-muted-foreground">{description.length}/{MAX_DESCRIPTION_LENGTH}</small>
-      <Editor
-        initialValue={defaultEditorValue}
-        onChange={(content) => {
-          setJsonContent(content.json)
-          setHtmlContent(content.html)
-        }}
-      />
-      <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-        <DialogTrigger asChild>
-          <Button disabled={pending || !title.trim() || !description.trim() || !htmlContent.trim()}>
+    <Card className="w-full">
+      <CardHeader className="pb-4">
+        <CardTitle>Add New Module</CardTitle>
+        <CardDescription>Create a new module for your course</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label htmlFor="title" className="text-sm font-medium">Module Title</label>
+              <Input
+                id="title"
+                type="text"
+                placeholder="Enter module title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full"
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="description" className="text-sm font-medium">Module Description</label>
+              <Textarea
+                id="description"
+                placeholder="Enter module description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={1}
+                className="w-full resize-none"
+              />
+            </div>
+          </div>
+          <div className="space-y-5">
+            <label htmlFor="content" className="text-sm font-medium">Module Content</label>
+            <ScrollArea className="w-full h-[60vh] ">
+              <div className="">
+                <Editor
+                  initialValue={defaultEditorValue}
+                  onChange={(content) => {
+                    setJsonContent(content.json)
+                    setHtmlContent(content.html)
+                  }}
+                />
+              </div>
+            </ScrollArea>
+          </div>
+          <Button type="submit" disabled={pending} className="w-full">
             {pending ? 'Adding...' : 'Add Module'}
           </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Add Module</DialogTitle>
-          </DialogHeader>
-          <p>Are you sure you want to add this module?</p>
-          <div className="flex justify-end space-x-2">
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button onClick={handleSubmit} disabled={pending}>
-              {pending ? 'Adding...' : 'Confirm'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div>
+        </form>
+      </CardContent>
+    </Card>
   )
 }

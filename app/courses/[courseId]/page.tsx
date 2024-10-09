@@ -7,17 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { User, BarChart, Clock, ArrowLeft, Plus } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-
-// Placeholder for AddModuleForm component
-const AddModuleForm = () => {
-  return (
-    <div>
-      <h3 className="text-lg font-medium mb-4">Add New Module</h3>
-      {/* Add form fields here */}
-      <Button>Add Module</Button>
-    </div>
-  )
-}
+import AddModuleForm from "@/components/add-module-form"
 
 export default async function CourseDetailPage({ params }: { params: { courseId: string } }) {
   const user = await currentUser()
@@ -87,11 +77,8 @@ export default async function CourseDetailPage({ params }: { params: { courseId:
                 Add Module
               </Button>
             </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New Module</DialogTitle>
-              </DialogHeader>
-              <AddModuleForm />
+            <DialogContent className="max-w-5xl w-full overflow-y-auto">
+              <AddModuleForm courseId={course.id} />
             </DialogContent>
           </Dialog>
         )}

@@ -15,7 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Menu, User, LogOut, GraduationCapIcon } from "lucide-react"
+import { Menu, User, LogOut, GraduationCapIcon, BookOpen } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
 import { Modal } from "@/components/ui/modal"
@@ -57,6 +57,7 @@ export function Navigation() {
       <NavLink href="/">Home</NavLink>
       <NavLink href="/courses">Kursus</NavLink>
       <NavLink href="/community">komunitas</NavLink>
+      <NavLink href="/articles">Articles</NavLink>
     </>
   )
 
@@ -119,6 +120,12 @@ export function Navigation() {
                       </Link>
                     </DropdownMenuItem>
                   )}
+                  <DropdownMenuItem asChild>
+                    <Link href="/articles" className="flex items-center">
+                      <BookOpen className="mr-2 h-4 w-4" />
+                      <span>Articles</span>
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem onSelect={handleLogout} className="text-red-600 focus:bg-red-100 focus:text-red-600">
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Log out</span>

@@ -21,19 +21,20 @@ model Testimonial {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  name          String?
-  role          UserRoles @default(MURID)
-  plan          UserPlan  @default(FREE)
-  emailVerified DateTime?
-  image         String?
-  password      String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  authoredCourses Course[] @relation("CourseAuthor")
-  joinedCourses  Course[]  @relation("CourseMembers") // Field diganti jadi joinedCourses
-  accounts      Account[]
+  id              String    @id @default(cuid())
+  email           String    @unique
+  name            String?
+  role            UserRoles @default(MURID)
+  plan            UserPlan  @default(FREE)
+  emailVerified   DateTime?
+  image           String?
+  password        String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  authoredCourses Course[]  @relation("CourseAuthor")
+  joinedCourses   Course[]  @relation("CourseMembers")
+  authoredArticles Article[] @relation("ArticleAuthor")
+  accounts        Account[]
 }
 
 enum UserRoles {
@@ -54,11 +55,13 @@ model Course {
   jsonDescription String?
   htmlDescription String?
   level           CourseLevel
+  thumbnail       String?
+  icon            String?
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
   author          User         @relation("CourseAuthor", fields: [authorId], references: [id])
   authorId        String
-  members         User[]       @relation("CourseMembers") // Relasi tetap sama
+  members         User[]       @relation("CourseMembers")
   modules         Module[]     @relation("CourseModules")
 }
 
@@ -73,6 +76,18 @@ model Module {
   updatedAt        DateTime @updatedAt
   course           Course   @relation("CourseModules", fields: [courseId], references: [id])
   courseId         Int
+}
+
+model Article {
+  id               Int      @id @default(autoincrement())
+  title            String
+  description      String?
+  jsonDescription  String
+  htmlDescription  String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  author           User     @relation("ArticleAuthor", fields: [authorId], references: [id])
+  authorId         String
 }
 
 enum CourseLevel {
