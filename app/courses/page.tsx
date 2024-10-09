@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { currentUser } from "@/lib/auth"
 import { getCourses } from "@/app/actions/get-courses"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { BookOpenIcon, PlusIcon, UserIcon, SearchIcon } from "lucide-react"
