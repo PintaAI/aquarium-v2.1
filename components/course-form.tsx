@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 import Editor from './editor/editor'
 import { Button } from './ui/button'
@@ -12,8 +13,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Card, CardContent } from './ui/card'
 import { CourseLevel } from '@prisma/client'
 import { addCourse } from '@/app/actions/add-course'
+import { uploadImage } from '@/app/actions/upload-image'
 import { JSONContent } from 'novel'
-import { User, BarChart, Clock } from "lucide-react"
+import { User, BarChart, Clock, Upload } from "lucide-react"
 
 const defaultEditorValue = {
   type: 'doc',
@@ -32,35 +34,47 @@ interface CourseFormProps {
 export default function CourseForm({ username }: CourseFormProps) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [level, setLevel] = useState<CourseLevel>(CourseLevel.BEGINNER) // Default value
+  const [level, setLevel] = useState<CourseLevel>(CourseLevel.BEGINNER)
   const [jsonDescription, setJsonDescription] = useState<JSONContent>(defaultEditorValue)
   const [htmlDescription, setHtmlDescription] = useState('')
+  const [thumbnail, setThumbnail] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
 
+  async function handleThumbnailUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      const imageUrl = await uploadImage(formData)
+      setThumbnail(imageUrl)
+      toast.success('Thumbnail uploaded successfully')
+    } catch (error) {
+      toast.error('Failed to upload thumbnail')
+      console.error('Error uploading thumbnail:', error)
+    }
+  }
+
   async function handleSubmit() {
-    if (!title || !description || !level || !jsonDescription || !htmlDescription) {
-      toast.error('Please fill in all fields')
+    if (!title || !description || !level || !jsonDescription || !htmlDescription || !thumbnail) {
+      toast.error('Please fill in all fields and upload a thumbnail')
       return
     }
 
     setPending(true)
 
     try {
-      console.log({
-        title,
-        description,
-        level,
-        jsonDescription,
-        htmlDescription
-      })
-
       const result = await addCourse({
         title,
         description,
         level,
-        jsonDescription: JSON.stringify(jsonDescription), // Convert to string
+        jsonDescription: JSON.stringify(jsonDescription),
         htmlDescription,
+        thumbnail,
       })
 
       if (!result.success) {
@@ -120,6 +134,32 @@ export default function CourseForm({ username }: CourseFormProps) {
                 <span>0 modules</span>
               </div>
             </div>
+
+            <div className="flex items-center gap-4">
+              <Button onClick={() => fileInputRef.current?.click()} type="button">
+                <Upload className="mr-2" size={16} />
+                Upload Thumbnail
+              </Button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleThumbnailUpload}
+                accept="image/*"
+                className="hidden"
+              />
+              {thumbnail && (
+                <div className="relative w-20 h-20">
+                  <Image
+                    src={thumbnail}
+                    alt="Course thumbnail"
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-md"
+                  />
+                </div>
+              )}
+            </div>
+
             <Button onClick={handleSubmit} disabled={pending} className="w-full">
               {pending ? 'Creating...' : 'Create Course'}
             </Button>
@@ -132,8 +172,8 @@ export default function CourseForm({ username }: CourseFormProps) {
         <Editor
           initialValue={defaultEditorValue}
           onChange={(content) => {
-            setJsonDescription(content.json) // Assuming content.json is JSONContent type
-            setHtmlDescription(content.html) // Assuming content.html is a string of HTML
+            setJsonDescription(content.json)
+            setHtmlDescription(content.html)
           }}
         />
       </div>

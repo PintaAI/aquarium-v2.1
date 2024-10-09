@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { currentUser } from "@/lib/auth"
 import { getCourses } from "@/app/actions/get-courses"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,6 +13,7 @@ type Course = {
   title: string
   description: string | null
   level: string
+  thumbnail: string | null
   author: {
     id: string
     name: string | null
@@ -55,10 +57,12 @@ export default async function ExplorePage() {
       <header className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Pejuangkorea Academy Courses</h1>
         <p className="dark:text-gray-400">Temukan kursus yang paling cocok buat kamu</p>
-        {user &&         <div className="mt-4 flex items-center space-x-2">
-          <UserAvatar />
-          <span className="text-sm font-medium">Hi,👋 {user?.name || 'User'}</span>
-        </div>}
+        {user && (
+          <div className="mt-4 flex items-center space-x-2">
+            <UserAvatar />
+            <span className="text-sm font-medium">Hi,👋 {user?.name || 'User'}</span>
+          </div>
+        )}
       </header>
 
       <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -115,11 +119,15 @@ const FilterComponent = () => (
 const CourseCard = ({ course }: { course: Course }) => (
   <Link href={`/courses/${course.id}`} aria-label={`View details for ${course.title}`}>
     <Card className="flex flex-col rounded-lg h-full transition-all duration-300 hover:shadow-md cursor-pointer transform hover:-translate-y-1 hover:scale-105">
-      <img
-        src="/images/course.jpg"
-        alt={`${course.title} thumbnail`}
-        className="h-40 w-full object-cover rounded-t-lg"
-      />
+      <div className="relative h-40 w-full">
+        <Image
+          src={course.thumbnail || '/images/course.jpg'}
+          alt={`${course.title} thumbnail`}
+          layout="fill"
+          objectFit="cover"
+          className="rounded-t-lg"
+        />
+      </div>
       <CardContent className="flex flex-col justify-between p-4">
         <div>
           <CardTitle className="text-lg font-semibold mb-2">{course.title}</CardTitle>

@@ -11,6 +11,7 @@ interface AddCourseParams {
   level: CourseLevel
   jsonDescription: string
   htmlDescription: string
+  thumbnail: string
 }
 
 export async function addCourse({
@@ -19,6 +20,7 @@ export async function addCourse({
   level,
   jsonDescription,
   htmlDescription,
+  thumbnail,
 }: AddCourseParams) {
   try {
     const user = await currentUser()
@@ -34,6 +36,7 @@ export async function addCourse({
         level,
         jsonDescription,
         htmlDescription,
+        thumbnail,
         authorId: user.id,
       },
     })

@@ -15,8 +15,8 @@ export async function uploadImage(formData: FormData) {
 
   const formDataToSend = new FormData();
   formDataToSend.append("file", file);
-  formDataToSend.append("path", "uploads"); // You can customize this path
-  formDataToSend.append("tags", "editor,upload"); // You can customize these tags
+  formDataToSend.append("path", "uploads");
+  formDataToSend.append("tags", "editor,upload");
 
   try {
     const response = await fetch("https://pics.shade.cool/api/upload", {
@@ -33,10 +33,12 @@ export async function uploadImage(formData: FormData) {
     }
 
     const data = await response.json();
-    revalidatePath('/'); // Revalidate the path where the image might be displayed
-    return `https://cdn.shade.cool/${data.path}`; // Construct the CDN URL
+    console.log('API Response:', data);
+    revalidatePath('/');
+    return data.cdn; // Use the correct CDN URL
   } catch (error) {
     console.error('Error uploading image:', error);
     throw error;
   }
 }
+
