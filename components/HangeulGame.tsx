@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
 import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
 
 interface HangulCharacter {
   character: string;
@@ -52,6 +53,7 @@ const hangulCharacters: HangulCharacter[] = [
 
 const TOTAL_QUESTIONS = 10;
 const TIME_PER_QUESTION = 10; // seconds
+const FEEDBACK_DURATION = 1500; // milliseconds
 
 export default function HangeulGame() {
   const [currentChar, setCurrentChar] = useState<HangulCharacter | null>(null);
@@ -61,6 +63,7 @@ export default function HangeulGame() {
   const [questionNumber, setQuestionNumber] = useState<number>(1);
   const [timeLeft, setTimeLeft] = useState<number>(TIME_PER_QUESTION);
   const [gameOver, setGameOver] = useState<boolean>(false);
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
     generateQuestion();
@@ -96,14 +99,22 @@ export default function HangeulGame() {
     return array.sort(() => Math.random() - 0.5);
   };
 
-  const handleOptionClick = (option: string) => {
+  const handleOptionClick = (option: string, index: number) => {
+    if (buttonRefs.current[index]) {
+      buttonRefs.current[index]?.blur();
+    }
+
     if (option === currentChar?.pronunciation) {
       setFeedback('Benar!');
       setScore(score + 1);
     } else {
       setFeedback(`Salah! jawaban yang benar adalah ${currentChar?.pronunciation}.`);
     }
-    setTimeout(handleNextQuestion, 1000);
+    
+    setTimeout(() => {
+      setFeedback('');
+      handleNextQuestion();
+    }, FEEDBACK_DURATION);
   };
 
   const handleNextQuestion = () => {
@@ -112,6 +123,7 @@ export default function HangeulGame() {
       generateQuestion();
     } else {
       setGameOver(true);
+      triggerConfetti();
     }
   };
 
@@ -120,6 +132,14 @@ export default function HangeulGame() {
     setQuestionNumber(1);
     setGameOver(false);
     generateQuestion();
+  };
+
+  const triggerConfetti = () => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
   };
 
   return (
@@ -137,7 +157,7 @@ export default function HangeulGame() {
             </div>
           )}
         </CardHeader>
-        <CardContent className="flex-grow flex flex-col justify-center">
+        <CardContent className="flex-grow flex flex-col justify-center relative">
           <AnimatePresence mode="wait">
             {!gameOver ? (
               currentChar && (
@@ -152,29 +172,35 @@ export default function HangeulGame() {
                   <div className="text-8xl font-bold my-6 bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">
                     {currentChar.character}
                   </div>
+                  <AnimatePresence>
+                    {feedback && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className={`text-center p-3 rounded-lg mb-4 w-full ${
+                          feedback === 'Benar!' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}
+                      >
+                        <p className="text-xl font-semibold">{feedback}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                   <div className="grid grid-cols-2 gap-4 w-full">
                     {options.map((option, index) => (
                       <Button
                         key={index}
-                        onClick={() => handleOptionClick(option)}
+                        ref={(el) => {
+                          buttonRefs.current[index] = el;
+                        }}
+                        onClick={() => handleOptionClick(option, index)}
                         variant="outline"
-                        className="w-full text-lg py-6 hover:bg-blue-100 transition-colors"
+                        className="w-full text-lg py-6 bg-white text-black hover:bg-blue-100 hover:text-blue-800 focus:bg-blue-100 focus:text-blue-800 transition-colors"
                       >
                         {option}
                       </Button>
                     ))}
                   </div>
-                  {feedback && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className={`mt-4 text-center p-2 rounded ${
-                        feedback === 'Benar!' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}
-                    >
-                      <p className="text-lg font-semibold">{feedback}</p>
-                    </motion.div>
-                  )}
                 </motion.div>
               )
             ) : (
