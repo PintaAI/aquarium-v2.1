@@ -6,12 +6,16 @@ import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { BookOpenIcon, PlusIcon, UserIcon, SearchIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { BookOpenIcon, PlusIcon, UserIcon, SearchIcon, TrashIcon } from "lucide-react";
 import { Course } from "@/app/actions/get-courses";
+import { deleteCourse } from "@/app/actions/delete-course";
+import { toast } from 'sonner';
 
 interface CourseListProps {
   initialCourses: Course[];
   userRole: string | undefined;
+  userId: string | undefined;
   error: string | null;
 }
 
@@ -24,13 +28,14 @@ const getLevelColor = (level: string) => {
   return levelColors[level.toLowerCase()] || 'text-gray-500';
 };
 
-export default function CourseList({ initialCourses, userRole, error }: CourseListProps) {
+export default function CourseList({ initialCourses, userRole, userId, error }: CourseListProps) {
+  const [courses, setCourses] = useState(initialCourses);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('all');
   const [sortOrder, setSortOrder] = useState('newest');
 
-  const sortCourses = (courses: Course[], order: string) => {
-    return [...courses].sort((a, b) => {
+  const sortCourses = (coursesToSort: Course[], order: string) => {
+    return [...coursesToSort].sort((a, b) => {
       const dateA = new Date(a.createdAt).getTime();
       const dateB = new Date(b.createdAt).getTime();
       return order === 'newest' ? dateB - dateA : dateA - dateB;
@@ -38,14 +43,26 @@ export default function CourseList({ initialCourses, userRole, error }: CourseLi
   };
 
   const filteredAndSortedCourses = useMemo(() => {
-    const filtered = initialCourses.filter((course) => {
+    const filtered = courses.filter((course) => {
       const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (course.description && course.description.toLowerCase().includes(searchTerm.toLowerCase()));
       const matchesLevel = selectedLevel === 'all' || course.level.toLowerCase() === selectedLevel;
       return matchesSearch && matchesLevel;
     });
     return sortCourses(filtered, sortOrder);
-  }, [initialCourses, searchTerm, selectedLevel, sortOrder]);
+  }, [courses, searchTerm, selectedLevel, sortOrder]);
+
+  const handleDeleteCourse = async (courseId: number) => {
+    if (window.confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
+      const result = await deleteCourse(courseId);
+      if (result.success) {
+        setCourses(courses.filter(course => course.id !== courseId));
+        toast.success('Course deleted successfully');
+      } else {
+        toast.error(result.error || 'Failed to delete course');
+      }
+    }
+  };
 
   return (
     <div>
@@ -97,16 +114,27 @@ export default function CourseList({ initialCourses, userRole, error }: CourseLi
         {userRole === 'GURU' && <AddCourseCard />}
 
         {filteredAndSortedCourses.map((course) => (
-          <CourseCard key={course.id} course={course} />
+          <CourseCard 
+            key={course.id} 
+            course={course} 
+            isAuthor={course.author.id === userId}
+            onDelete={() => handleDeleteCourse(course.id)}
+          />
         ))}
       </div>
     </div>
   );
 }
 
-const CourseCard = ({ course }: { course: Course }) => (
-  <Link href={`/courses/${course.id}`} aria-label={`View details for ${course.title}`}>
-    <Card className="flex flex-col rounded-lg h-full transition-all duration-300 hover:shadow-md cursor-pointer transform hover:-translate-y-1 hover:scale-105">
+interface CourseCardProps {
+  course: Course;
+  isAuthor: boolean;
+  onDelete: () => void;
+}
+
+const CourseCard = ({ course, isAuthor, onDelete }: CourseCardProps) => (
+  <Link href={`/courses/${course.id}`}>
+    <Card className="flex flex-col rounded-lg h-full transition-all duration-300 hover:shadow-md cursor-pointer transform hover:-translate-y-1 hover:scale-105 group">
       <div className="relative h-40 w-full">
         <Image
           src={course.thumbnail || '/images/course.jpg'}
@@ -115,6 +143,21 @@ const CourseCard = ({ course }: { course: Course }) => (
           objectFit="cover"
           className="rounded-t-lg"
         />
+        {isAuthor && (
+          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onDelete();
+              }}
+            >
+              <TrashIcon className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </div>
       <CardContent className="flex flex-col justify-between p-4">
         <div>

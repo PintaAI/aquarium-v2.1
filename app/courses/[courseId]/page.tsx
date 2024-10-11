@@ -5,9 +5,10 @@ import { currentUser } from "@/lib/auth"
 import { getCourse } from "@/app/actions/get-course"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { User, BarChart, Clock, ArrowLeft, Plus } from "lucide-react"
+import { User, BarChart, Clock, ArrowLeft, Plus, Edit } from "lucide-react"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import AddModuleForm from "@/components/add-module-form"
+import DeleteCourseButton from './components/DeleteCourseButton'
 
 export default async function CourseDetailPage({ params }: { params: { courseId: string } }) {
   const user = await currentUser()
@@ -30,21 +31,20 @@ export default async function CourseDetailPage({ params }: { params: { courseId:
             </Link>
           </Button>
 
-          {user && <h2 className="text-2xl font-bold mb-8">Welcome, {user.name}</h2>}
+          {user && <h2 className="text-2xl font-bold mb-8">Hi 👋, {user.name}</h2>}
 
           <Card className="mb-2 shadow-sm hover:shadow-md transition-shadow duration-300">
-            {course.thumbnail || '/images/course.jpg' ? (
+            {course.thumbnail && (
               <div className="relative h-40 w-full rounded-t-lg">
                 <Image 
-                  src={course.thumbnail || '/images/course.jpg'}
+                  src={course.thumbnail}
                   alt={`${course.title} thumbnail`} 
                   layout='fill' 
-                  sizes='sm' 
                   objectFit='cover' 
                   className='rounded-t-lg' 
                 />
               </div>
-            ) : null}
+            )}
             <CardHeader>
               <CardTitle className="text-3xl font-bold">{course.title}</CardTitle>
             </CardHeader>
@@ -64,7 +64,19 @@ export default async function CourseDetailPage({ params }: { params: { courseId:
                   <span>{course.modules.length} modules</span>
                 </div>
               </div>
-              <Button className="w-full">Start Course</Button>
+              <div className="flex justify-between items-center">
+                <Button className="w-full mr-2">Start Course</Button>
+                {isAuthor && (
+                  <div className="flex">
+                    <Button asChild variant="outline" size="icon" className="mr-2">
+                      <Link href={`/courses/${course.id}/edit`}>
+                        <Edit className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <DeleteCourseButton courseId={course.id} />
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
 
@@ -79,7 +91,6 @@ export default async function CourseDetailPage({ params }: { params: { courseId:
             </Card>
           )}
         </div>
-
 
         <div className="lg:col-span-1 mt-20">
           <div className="flex justify-between items-center mb-4">
@@ -99,32 +110,32 @@ export default async function CourseDetailPage({ params }: { params: { courseId:
             )}
           </div>
           <div className="space-y-4">
-  {course.modules.map((module, index) => (
-    <Card key={module.id} className="overflow-hidden border-l-4 border-l-primary shadow-sm hover:shadow-md transition-all duration-300">
-      <CardContent className="p-0">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gradient-to-r from-primary/5 to-transparent">
-          <div className="flex items-center space-x-3">
-            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold">
-              {index + 1}
-            </span>
-            <h3 className="text-lg font-medium line-clamp-1">
-              {module.title}
-            </h3>
+            {course.modules.map((module, index) => (
+              <Card key={module.id} className="overflow-hidden border-l-4 border-l-primary shadow-sm hover:shadow-md transition-all duration-300">
+                <CardContent className="p-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gradient-to-r from-primary/5 to-transparent">
+                    <div className="flex items-center space-x-3">
+                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold">
+                        {index + 1}
+                      </span>
+                      <h3 className="text-lg font-medium line-clamp-1">
+                        {module.title}
+                      </h3>
+                    </div>
+                    <Button asChild variant="ghost" size="sm" className="mt-2 sm:mt-0">
+                      <Link href={`/courses/${course.id}/modules/${module.id}`} className="flex items-center space-x-1">
+                        <span>Start</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                      </Link>
+                    </Button>
+                  </div>
+                  <div className="px-4 pb-4 pt-2">
+                    <p className="text-sm text-muted-foreground line-clamp-2">{module.description}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-          <Button asChild variant="ghost" size="sm" className="mt-2 sm:mt-0">
-            <Link href={`/courses/${course.id}/modules/${module.id}`} className="flex items-center space-x-1">
-              <span>Start</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
-            </Link>
-          </Button>
-        </div>
-        <div className="px-4 pb-4 pt-2">
-          <p className="text-sm text-muted-foreground line-clamp-2">{module.description}</p>
-        </div>
-      </CardContent>
-    </Card>
-  ))}
-</div>
         </div>
       </div>
     </div>

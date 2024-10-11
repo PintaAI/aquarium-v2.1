@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Card, CardContent } from './ui/card'
 import { CourseLevel } from '@prisma/client'
 import { addCourse } from '@/app/actions/add-course'
+import { updateCourse } from '@/app/actions/update-course'
 import { uploadImage } from '@/app/actions/upload-image'
 import { JSONContent } from 'novel'
 import { User, BarChart, Clock, Upload } from "lucide-react"
@@ -29,15 +30,24 @@ const defaultEditorValue = {
 
 interface CourseFormProps {
   username: string;
+  initialData?: {
+    id: number;
+    title: string;
+    description: string;
+    level: CourseLevel;
+    jsonDescription: string;
+    htmlDescription: string;
+    thumbnail: string | null;
+  };
 }
 
-export default function CourseForm({ username }: CourseFormProps) {
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [level, setLevel] = useState<CourseLevel>(CourseLevel.BEGINNER)
-  const [jsonDescription, setJsonDescription] = useState<JSONContent>(defaultEditorValue)
-  const [htmlDescription, setHtmlDescription] = useState('')
-  const [thumbnail, setThumbnail] = useState<string | null>(null)
+export default function CourseForm({ username, initialData }: CourseFormProps) {
+  const [title, setTitle] = useState(initialData?.title || '')
+  const [description, setDescription] = useState(initialData?.description || '')
+  const [level, setLevel] = useState<CourseLevel>(initialData?.level || CourseLevel.BEGINNER)
+  const [jsonDescription, setJsonDescription] = useState<JSONContent>(initialData?.jsonDescription ? JSON.parse(initialData.jsonDescription) : defaultEditorValue)
+  const [htmlDescription, setHtmlDescription] = useState(initialData?.htmlDescription || '')
+  const [thumbnail, setThumbnail] = useState<string | null>(initialData?.thumbnail || null)
   const [pending, setPending] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
@@ -68,23 +78,30 @@ export default function CourseForm({ username }: CourseFormProps) {
     setPending(true)
 
     try {
-      const result = await addCourse({
+      const courseData = {
         title,
         description,
         level,
         jsonDescription: JSON.stringify(jsonDescription),
         htmlDescription,
         thumbnail,
-      })
-
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to create course')
       }
 
-      toast.success('Course created successfully')
+      let result
+      if (initialData) {
+        result = await updateCourse(initialData.id, courseData)
+      } else {
+        result = await addCourse(courseData)
+      }
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to save course')
+      }
+
+      toast.success(initialData ? 'Course updated successfully' : 'Course created successfully')
       router.push(`/courses/${result.courseId}`)
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to create course')
+      toast.error(error instanceof Error ? error.message : 'Failed to save course')
     } finally {
       setPending(false)
     }
@@ -97,14 +114,14 @@ export default function CourseForm({ username }: CourseFormProps) {
           <div className='flex flex-col gap-4 md:gap-6'>
             <Input
               type='text'
-              placeholder='Tulis Judul di sini...'
+              placeholder='Write title here...'
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="text-2xl md:text-3xl font-bold border-none p-0 text-white"
             />
             
             <Textarea
-              placeholder='Tambahkan deskripsi singkat di sini...'
+              placeholder='Add a brief description here...'
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
@@ -161,7 +178,7 @@ export default function CourseForm({ username }: CourseFormProps) {
             </div>
 
             <Button onClick={handleSubmit} disabled={pending} className="w-full">
-              {pending ? 'Creating...' : 'Create Course'}
+              {pending ? 'Saving...' : initialData ? 'Update Course' : 'Create Course'}
             </Button>
           </div>
         </CardContent>
@@ -170,7 +187,7 @@ export default function CourseForm({ username }: CourseFormProps) {
       <div className="mt-6">
         <h2 className="text-xl md:text-2xl font-bold mb-4">Detailed Description</h2>
         <Editor
-          initialValue={defaultEditorValue}
+          initialValue={jsonDescription}
           onChange={(content) => {
             setJsonDescription(content.json)
             setHtmlDescription(content.html)

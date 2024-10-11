@@ -22,7 +22,12 @@ export default async function CoursesPage() {
       <p className="dark:text-gray-400 mb-6">Temukan kursus yang paling cocok buat kamu</p>
       <UserHeader user={user} />
       <Suspense fallback={<div>Loading courses...</div>}>
-        <CourseList initialCourses={courses} userRole={user?.role} error={error} />
+        <CourseList 
+          initialCourses={courses} 
+          userRole={user?.role} 
+          userId={user?.id}
+          error={error} 
+        />
       </Suspense>
     </div>
   );
