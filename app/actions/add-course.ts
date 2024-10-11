@@ -11,7 +11,7 @@ interface AddCourseParams {
   level: CourseLevel
   jsonDescription: string
   htmlDescription: string
-  thumbnail: string
+  thumbnail?: string | null
 }
 
 export async function addCourse({
@@ -36,7 +36,7 @@ export async function addCourse({
         level,
         jsonDescription,
         htmlDescription,
-        thumbnail,
+        thumbnail: thumbnail || null,
         authorId: user.id,
       },
     })

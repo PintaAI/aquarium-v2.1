@@ -60,8 +60,8 @@ export default function CourseForm({ username }: CourseFormProps) {
   }
 
   async function handleSubmit() {
-    if (!title || !description || !level || !jsonDescription || !htmlDescription || !thumbnail) {
-      toast.error('Please fill in all fields and upload a thumbnail')
+    if (!title || !description || !level || !jsonDescription || !htmlDescription) {
+      toast.error('Please fill in all required fields')
       return
     }
 
@@ -138,7 +138,7 @@ export default function CourseForm({ username }: CourseFormProps) {
             <div className="flex items-center gap-4">
               <Button onClick={() => fileInputRef.current?.click()} type="button">
                 <Upload className="mr-2" size={16} />
-                Upload Thumbnail
+                Upload Thumbnail (Optional)
               </Button>
               <input
                 type="file"
