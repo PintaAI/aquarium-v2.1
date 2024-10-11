@@ -1,36 +1,44 @@
-import { redirect } from 'next/navigation'
-import { currentUser } from "@/lib/auth"
+import React from 'react';
+import { redirect } from 'next/navigation';
+import { currentUser } from "@/lib/auth";
+import Sidebar from "@/components/ui/Sidebar";
+import { MainContent } from './components/MainContent';
+
+// Types
+interface Course {
+  id: number;
+  name: string;
+  progress: number;
+}
+
+// Mock data fetching function (replace with real data fetching in the future)
+const fetchUserData = async (): Promise<{ courses: Course[] }> => {
+  // Simulating API call
+  return {
+    courses: [
+      { id: 1, name: "Persiapan Ujian Tingkat Menengah", progress: 80 },
+      { id: 2, name: "Bahasa Bisnis", progress: 45 },
+      { id: 3, name: "Belajar Bahasa melalui Musik Pop", progress: 20 },
+    ],
+  };
+};
 
 export default async function ProfilePage() {
-  const user = await currentUser()
+  const user = await currentUser();
 
   if (!user) {
-    redirect('/auth/signin')
+    redirect('/auth/login');
   }
 
+  const { courses } = await fetchUserData();
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">User Profile</h1>
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-            Name
-          </label>
-          <p className="text-gray-900" id="name">{user.name}</p>
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-            Email
-          </label>
-          <p className="text-gray-900" id="email">{user.email}</p>
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="role">
-            Role
-          </label>
-          <p className="text-gray-900" id="role">{user.role}</p>
-        </div>
-      </div>
+    <div className="flex min-h-screen">
+      <Sidebar className='hidden md:block'/>
+      <MainContent user={{
+        name: user.name || null,
+        image: user.image || null
+      }} courses={courses} />
     </div>
-  )
+  );
 }

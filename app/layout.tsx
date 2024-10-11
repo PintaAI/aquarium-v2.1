@@ -6,6 +6,7 @@ import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import { Outfit } from 'next/font/google';
 import MobileNavbar from "@/components/ui/MobileNavbar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -55,14 +56,16 @@ export default async function RootLayout({
       <body className={`${outfit.variable} font-sans antialiased`}>
         <SessionProvider session={session}>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-            <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/30 via-background to-secondary/30 text-foreground">
-              <div className="flex flex-grow">   
-                <main className="flex-grow overflow-y-auto pb-16 md:pb-0">
-                  {children}
-                </main>
+            <TooltipProvider>
+              <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/30 via-background to-secondary/30 text-foreground">
+                <div className="flex flex-grow">   
+                  <main className="flex-grow overflow-y-auto pb-16 md:pb-0">
+                    {children}
+                  </main>
+                </div>
+                <MobileNavbar className="md:hidden" />
               </div>
-              <MobileNavbar className="md:hidden" />
-            </div>
+            </TooltipProvider>
           </ThemeProvider>
         </SessionProvider>
       </body>

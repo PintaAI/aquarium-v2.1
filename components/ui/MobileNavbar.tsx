@@ -16,7 +16,7 @@ const MobileNavbar: React.FC<MobileNavbarProps> = ({ className }) => {
   const pathname = usePathname();
 
   const menuItems = [
-    { icon: Home, label: 'Home', href: '/' },
+    { icon: Home, label: 'Home', href: '/home' },
     { icon: Users, label: 'Community', href: '/community' },
     { icon: BookOpen, label: 'Courses', href: '/courses' },
   ];

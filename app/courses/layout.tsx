@@ -6,6 +6,7 @@ export default function CourseLayout({
 }: {
   children: React.ReactNode
 }) {
+  
   return (
     <div className="flex h-screen">
        <Sidebar className="hidden md:block" />

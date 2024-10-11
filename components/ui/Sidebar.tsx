@@ -3,38 +3,26 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { BookOpen, Home, Users, UserCircle, ChevronsLeft, GraduationCap, Compass, ChevronDown, GamepadIcon } from 'lucide-react';
+import { Home, BookOpen, UserCircle, ChevronsLeft, FileText, Settings, LogOut } from 'lucide-react';
 import { Button } from './button';
 import { ScrollArea } from './scroll-area';
+import { Avatar, AvatarImage, AvatarFallback } from './avatar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './dropdown-menu';
 import { cn } from '@/lib/utils';
-import { UseCurrentUser } from "@/hooks/use-current-user";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "./accordion";
 
-interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
+  session?: { user: { name?: string; image?: string } };
+}
 
-const Sidebar: React.FC<SidebarProps> = ({ className, ...props }) => {
+const Sidebar: React.FC<SidebarProps> = ({ className, session, ...props }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const [openItems, setOpenItems] = useState<string[]>(["navigation"]);
-  const user = UseCurrentUser();
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
   const menuItems = [
     { icon: Home, label: 'Home', href: '/' },
-    { icon: Users, label: 'Community', href: '/community' },
-    { icon: UserCircle, label: 'Profile', href: '/profile' },
-  ];
-
-  // Mock data for joined courses and mini-games (replace with actual data fetching logic)
-  const joinedItems = [
-    { id: '1', title: 'Course 1', type: 'course' },
-    { id: '2', title: 'Mini Game 1', type: 'game' },
-    { id: '3', title: 'Course 2', type: 'course' },
+    { icon: BookOpen, label: 'Courses', href: '/courses' },
+    { icon: FileText, label: 'Articles', href: '/articles' },
   ];
 
   return (
@@ -74,95 +62,68 @@ const Sidebar: React.FC<SidebarProps> = ({ className, ...props }) => {
       </div>
 
       <ScrollArea className="flex-grow">
-        <Accordion 
-          type="multiple" 
-          className="w-full" 
-          value={openItems}
-          onValueChange={setOpenItems}
-        >
-          <AccordionItem value="navigation">
-            <AccordionTrigger
-              className={cn(
-                "hover:no-underline flex items-center justify-between",
-                isCollapsed ? "px-2" : "px-4"
-              )}
-            >
-              <div className="flex items-center">
-                <Compass className={cn("h-5 w-5", isCollapsed ? "mr-0" : "mr-2")} />
-                {!isCollapsed && <span>Navigation</span>}
-              </div>
-              {!isCollapsed && <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />}
-            </AccordionTrigger>
-            <AccordionContent>
-              <nav className="space-y-2">
-                {menuItems.map((item) => (
-                  <Link key={item.href} href={item.href}>
-                    <Button
-                      variant="ghost"
-                      className={cn(
-                        "w-full justify-start",
-                        isCollapsed ? "px-2" : "px-4"
-                      )}
-                    >
-                      <item.icon className={cn("h-5 w-5", isCollapsed ? "mr-0" : "mr-2")} />
-                      {!isCollapsed && <span>{item.label}</span>}
-                    </Button>
-                  </Link>
-                ))}
-              </nav>
-            </AccordionContent>
-          </AccordionItem>
-
-          <AccordionItem value="courses">
-            <AccordionTrigger
-              className={cn(
-                "hover:no-underline flex items-center justify-between",
-                isCollapsed ? "px-2" : "px-4"
-              )}
-            >
-              <div className="flex items-center">
-                <BookOpen className={cn("h-5 w-5", isCollapsed ? "mr-0" : "mr-2")} />
-                {!isCollapsed && <span>Courses</span>}
-              </div>
-              {!isCollapsed && <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />}
-            </AccordionTrigger>
-            <AccordionContent>
-              <nav className="space-y-2">
-                <Link href="/explore">
-                  <Button
-                    variant="ghost"
-                    className={cn(
-                      "w-full justify-start",
-                      isCollapsed ? "px-2" : "px-4"
-                    )}
-                  >
-                    <Compass className={cn("h-5 w-5", isCollapsed ? "mr-0" : "mr-2")} />
-                    {!isCollapsed && <span>Explore Courses</span>}
-                  </Button>
-                </Link>
-                {joinedItems.map((item) => (
-                  <Link key={item.id} href={`/courses/${item.id}`}>
-                    <Button
-                      variant="ghost"
-                      className={cn(
-                        "w-full justify-start",
-                        isCollapsed ? "px-2" : "px-4"
-                      )}
-                    >
-                      {item.type === 'course' ? (
-                        <GraduationCap className={cn("h-5 w-5", isCollapsed ? "mr-0" : "mr-2")} />
-                      ) : (
-                        <GamepadIcon className={cn("h-5 w-5", isCollapsed ? "mr-0" : "mr-2")} />
-                      )}
-                      {!isCollapsed && <span className="truncate">{item.title}</span>}
-                    </Button>
-                  </Link>
-                ))}
-              </nav>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+        <nav className="space-y-2">
+          {menuItems.map((item) => (
+            <Link key={item.href} href={item.href}>
+              <Button
+                variant="ghost"
+                className={cn(
+                  "w-full justify-start",
+                  isCollapsed ? "px-2" : "px-4"
+                )}
+              >
+                <item.icon className={cn("h-5 w-5", isCollapsed ? "mr-0" : "mr-2")} />
+                {!isCollapsed && <span>{item.label}</span>}
+              </Button>
+            </Link>
+          ))}
+        </nav>
       </ScrollArea>
+
+      <div className="mt-auto space-y-2">
+        {session?.user && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className={cn(
+                  "w-full justify-start items-center",
+                  isCollapsed ? "px-0" : "px-4"
+                )}
+              >
+                <Avatar className="h-8 w-8 mr-2">
+                  <AvatarImage src={session.user.image} alt={session.user.name} />
+                  <AvatarFallback>{session.user.name?.charAt(0)}</AvatarFallback>
+                </Avatar>
+                {!isCollapsed && (
+                  <span className="truncate">{session.user.name}</span>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem>
+                <Link href="/profile" className="flex items-center">
+                  <UserCircle className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/settings" className="flex items-center">
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/api/auth/signout" className="flex items-center">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+        
+      </div>
     </aside>
   );
 };
