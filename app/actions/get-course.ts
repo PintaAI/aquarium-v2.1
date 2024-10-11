@@ -8,6 +8,7 @@ export async function getCourse(courseId: number) {
       include: {
         author: true,
         modules: true,
+        members: true, // Include course members
       },
     });
 
@@ -20,6 +21,6 @@ export async function getCourse(courseId: number) {
     return course;
   } catch (error) {
     console.error(`Failed to fetch course with id ${courseId}:`, error);
-    throw error; // Re-throw the error to be caught by the page component
+    throw error;
   }
 }

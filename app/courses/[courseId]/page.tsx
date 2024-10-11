@@ -1,8 +1,9 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { currentUser } from "@/lib/auth"
 import { getCourse } from "@/app/actions/get-course"
+import { startCourse } from "@/app/actions/start-course"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { User, BarChart, Clock, ArrowLeft, Plus, Edit } from "lucide-react"
@@ -19,6 +20,7 @@ export default async function CourseDetailPage({ params }: { params: { courseId:
   }
 
   const isAuthor = user?.id === course.authorId
+  const hasJoined = course.members.some(member => member.id === user?.id)
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-7xl">
@@ -39,8 +41,8 @@ export default async function CourseDetailPage({ params }: { params: { courseId:
                 <Image 
                   src={course.thumbnail}
                   alt={`${course.title} thumbnail`} 
-                  layout='fill' 
-                  objectFit='cover' 
+                  fill
+                  style={{ objectFit: 'cover' }}
                   className='rounded-t-lg' 
                 />
               </div>
@@ -65,7 +67,23 @@ export default async function CourseDetailPage({ params }: { params: { courseId:
                 </div>
               </div>
               <div className="flex justify-between items-center">
-                <Button className="w-full mr-2">Start Course</Button>
+                {hasJoined ? (
+                  <Button className="w-full mr-2" asChild>
+                    <Link href={`/courses/${course.id}/modules/${course.modules[0]?.id}`}>
+                      Continue Course
+                    </Link>
+                  </Button>
+                ) : (
+                  <form action={async () => {
+                    'use server'
+                    const result = await startCourse(course.id)
+                    if (result.success && result.nextModuleId) {
+                      redirect(`/courses/${course.id}/modules/${result.nextModuleId}`)
+                    }
+                  }}>
+                    <Button className="w-full mr-2" type="submit">Start Course</Button>
+                  </form>
+                )}
                 {isAuthor && (
                   <div className="flex">
                     <Button asChild variant="outline" size="icon" className="mr-2">
