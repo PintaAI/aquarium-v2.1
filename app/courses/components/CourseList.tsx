@@ -28,6 +28,11 @@ const getLevelColor = (level: string) => {
   return levelColors[level.toLowerCase()] || 'text-gray-500';
 };
 
+const truncateText = (text: string, maxLength: number = 100) => {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength - 3) + '...';
+};
+
 export default function CourseList({ initialCourses, userRole, userId, error }: CourseListProps) {
   const [courses, setCourses] = useState(initialCourses);
   const [searchTerm, setSearchTerm] = useState('');
@@ -163,7 +168,7 @@ const CourseCard = ({ course, isAuthor, onDelete }: CourseCardProps) => (
         <div>
           <CardTitle className="text-lg font-semibold mb-2">{course.title}</CardTitle>
           <CardDescription className="text-sm text-gray-500 mb-4">
-            {course.description || 'No description available'}
+            {truncateText(course.description || 'No description available', 130)}
           </CardDescription>
         </div>
         <div className="flex justify-between items-center text-sm">
