@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import FlashcardGame from './Flashcard-game';
 import HangeulGame from './HangeulGame';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Gamepad2, ArrowLeft, BookOpen, Sparkles } from 'lucide-react';
@@ -26,7 +27,7 @@ const games: Game[] = [
     id: 'vocabulary', 
     name: 'Hafalan Kosa kata', 
     description: 'Ga ada yang lebih baik ngapalin kosa kata di banding main game ini seru banget asli',
-    component: () => <div>Coming soon</div>, 
+    component: FlashcardGame, 
     icon: <BookOpen className="w-8 h-8" />,
     color: 'bg-emerald-500' 
   },
