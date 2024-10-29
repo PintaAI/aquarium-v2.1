@@ -54,7 +54,7 @@ export function Navigation() {
 
   const NavItems = () => (
     <>
-      <NavLink href="/">Home</NavLink>
+      <NavLink href="/home">Game</NavLink>
       <NavLink href="/courses">Kursus</NavLink>
       <NavLink href="/community">komunitas</NavLink>
       <NavLink href="/articles">Articles</NavLink>

@@ -35,7 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, session, ...props }) => {
       {...props}
     >
       <div className="flex items-center justify-between mb-6">
-        <Link href="/">
+        <Link href="/home">
           {!isCollapsed && (
             <Image
               src="/images/logo-text.png"
