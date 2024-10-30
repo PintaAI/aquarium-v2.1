@@ -7,7 +7,7 @@ const nextConfig = {
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   },
   images: {
-    domains: ['cdn.shade.cool', 'imagecdn.app'], // Added 'imagecdn.app'
+    domains: ['cdn.shade.cool', 'imagecdn.app', 'res.cloudinary.com'], // Added Cloudinary domain
   },
 };
 

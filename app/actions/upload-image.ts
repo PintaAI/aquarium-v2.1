@@ -2,43 +2,43 @@
 
 import { revalidatePath } from "next/cache";
 
+const CLOUD_NAME = "dnscb3unj";
+
 export async function uploadImage(formData: FormData) {
   const file = formData.get('file') as File;
   if (!file) {
     throw new Error("No file provided");
   }
 
-  const apiKey = process.env.PICS_SHADE_API_KEY;
-  if (!apiKey) {
-    throw new Error("PICS_SHADE_API_KEY not found in environment variables");
-  }
-
-  const formDataToSend = new FormData();
-  formDataToSend.append("file", file);
-  formDataToSend.append("path", "uploads");
-  formDataToSend.append("tags", "editor,upload");
-
   try {
-    const response = await fetch("https://pics.shade.cool/api/upload", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-      },
-      body: formDataToSend,
-    });
+    // Create a new FormData instance for the Cloudinary upload
+    const cloudinaryFormData = new FormData();
+    cloudinaryFormData.append("file", file);
+    cloudinaryFormData.append("upload_preset", "ml_default");
+    cloudinaryFormData.append("folder", "aquarium");
+
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+      {
+        method: "POST",
+        body: cloudinaryFormData,
+      }
+    );
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      console.error('Cloudinary error details:', errorData);
+      throw new Error(errorData.error?.message || `Upload failed with status: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('API Response:', data);
+    console.log('Cloudinary upload successful:', data);
     revalidatePath('/');
-    return data.cdn; // Use the correct CDN URL
+    
+    // Return the secure URL from Cloudinary
+    return data.secure_url;
   } catch (error) {
-    console.error('Error uploading image:', error);
+    console.error('Error uploading image to Cloudinary:', error);
     throw error;
   }
 }
-
