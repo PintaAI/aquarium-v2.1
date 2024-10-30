@@ -243,7 +243,7 @@ export default function FallingWordsGame() {
 
         <CardContent className="flex-1 flex flex-col h-full p-4 gap-4">
           <div 
-            className="game-area relative flex-1 border-0 rounded-lg overflow-hidden"
+            className="game-area relative flex-shrink-0 h-[50vh] md:flex-1 md:h-auto border-0 rounded-lg overflow-hidden"
             style={{ 
               borderColor: 'var(--border)',
               background: 'var(--background)'
@@ -381,7 +381,7 @@ export default function FallingWordsGame() {
             {gameOver && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm gap-4">
                 <h3 className="text-2xl font-semibold">
-                  Game Over! Final Score: {score}
+                  Game Selesai! Score: {score}
                 </h3>
                 <Button 
                   onClick={startGame}
@@ -389,7 +389,7 @@ export default function FallingWordsGame() {
                   className="text-lg px-8"
                   disabled={isUsingCustomWords && customWords.length === 0}
                 >
-                  Play Again
+                  Main Lagi?
                 </Button>
               </div>
             )}
