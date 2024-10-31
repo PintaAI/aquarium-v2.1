@@ -2,9 +2,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Users, UserCircle, BookOpen } from 'lucide-react';
+import { Gamepad, Users, UserCircle, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { UseCurrentUser } from "@/hooks/use-current-user";
+import { UseCurrentUser } from '@/hooks/use-current-user';
 import { Avatar, AvatarFallback, AvatarImage } from './avatar';
 
 interface MobileNavbarProps {
@@ -16,7 +16,7 @@ const MobileNavbar: React.FC<MobileNavbarProps> = ({ className }) => {
   const pathname = usePathname();
 
   const menuItems = [
-    { icon: Home, label: 'Home', href: '/home' },
+    { icon: Gamepad, label: 'Games', href: '/home' },
     { icon: Users, label: 'Community', href: '/community' },
     { icon: BookOpen, label: 'Courses', href: '/courses' },
   ];
@@ -60,7 +60,7 @@ const MobileNavbar: React.FC<MobileNavbarProps> = ({ className }) => {
           ) : (
             <UserCircle className="h-6 w-6" />
           )}
-
+          
         </Link>
       </div>
     </nav>

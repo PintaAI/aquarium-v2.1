@@ -13,42 +13,51 @@ interface HangulCharacter {
 }
 
 const hangulCharacters: HangulCharacter[] = [
-    { character: 'ㄱ', pronunciation: 'G' },
-    { character: 'ㄴ', pronunciation: 'N' },
-    { character: 'ㄷ', pronunciation: 'D' },
-    { character: 'ㄹ', pronunciation: 'R/L' },
-    { character: 'ㅁ', pronunciation: 'M' },
-    { character: 'ㅂ', pronunciation: 'B' },
-    { character: 'ㅅ', pronunciation: 'S' },
-    { character: 'ㅇ', pronunciation: 'Diam/Ng' },
-    { character: 'ㅈ', pronunciation: 'J' },
-    { character: 'ㅊ', pronunciation: 'Ch' },
-    { character: 'ㅋ', pronunciation: 'K' },
-    { character: 'ㅌ', pronunciation: 'T' },
-    { character: 'ㅍ', pronunciation: 'P' },
-    { character: 'ㅎ', pronunciation: 'H' },
-    { character: 'ㅏ', pronunciation: 'A' },
-    { character: 'ㅑ', pronunciation: 'Ya' },
-    { character: 'ㅓ', pronunciation: 'Eo' },
-    { character: 'ㅕ', pronunciation: 'Yeo' },
-    { character: 'ㅗ', pronunciation: 'O' },
-    { character: 'ㅛ', pronunciation: 'Yo' },
-    { character: 'ㅜ', pronunciation: 'U' },
-    { character: 'ㅠ', pronunciation: 'Yu' },
-    { character: 'ㅡ', pronunciation: 'Eu' },
-    { character: 'ㅣ', pronunciation: 'I' },
-    { character: 'ㅐ', pronunciation: 'Ae' },
-    { character: 'ㅔ', pronunciation: 'E' },
-    { character: 'ㅒ', pronunciation: 'Yae' },
-    { character: 'ㅖ', pronunciation: 'Ye' },
-    { character: 'ㅘ', pronunciation: 'Wa' },
-    { character: 'ㅙ', pronunciation: 'Wae' },
-    { character: 'ㅚ', pronunciation: 'Oe' },
-    { character: 'ㅝ', pronunciation: 'Weo' },
-    { character: 'ㅞ', pronunciation: 'We' },
-    { character: 'ㅟ', pronunciation: 'Wi' },
-    { character: 'ㅢ', pronunciation: 'Ui' }
-  ];
+  // Konsonan
+  { character: 'ㄱ', pronunciation: 'G' },
+  { character: 'ㄴ', pronunciation: 'N' },
+  { character: 'ㄷ', pronunciation: 'D' },
+  { character: 'ㄹ', pronunciation: 'R/L' },
+  { character: 'ㅁ', pronunciation: 'M' },
+  { character: 'ㅂ', pronunciation: 'B' },
+  { character: 'ㅅ', pronunciation: 'S' },
+  { character: 'ㅇ', pronunciation: 'Diam/Ng' },
+  { character: 'ㅈ', pronunciation: 'J' },
+  { character: 'ㅊ', pronunciation: 'Ch' },
+  { character: 'ㅋ', pronunciation: 'K' },
+  { character: 'ㅌ', pronunciation: 'T' },
+  { character: 'ㅍ', pronunciation: 'P' },
+  { character: 'ㅎ', pronunciation: 'H' },
+
+  // Vokal Tunggal Berdiri
+  { character: 'ㅏ', pronunciation: 'A' },
+  { character: 'ㅑ', pronunciation: 'Ya' },
+  { character: 'ㅓ', pronunciation: 'Eo' },
+  { character: 'ㅕ', pronunciation: 'Yeo' },
+
+  // Vokal Tunggal Duduk
+  { character: 'ㅜ', pronunciation: 'U' },
+  { character: 'ㅠ', pronunciation: 'Yu' },
+  { character: 'ㅗ', pronunciation: 'O' },
+  { character: 'ㅛ', pronunciation: 'Yo' },
+  { character: 'ㅡ', pronunciation: 'Eu' },
+
+  // Vokal Rangkap Berdiri
+  { character: 'ㅔ', pronunciation: 'E' },
+  { character: 'ㅖ', pronunciation: 'Ye' },
+  { character: 'ㅐ', pronunciation: 'Ae' },
+  { character: 'ㅒ', pronunciation: 'Yae' },
+
+  // Vokal Rangkap Duduk
+  { character: 'ㅘ', pronunciation: 'Wa' },
+  { character: 'ㅙ', pronunciation: 'Wae' },
+  { character: 'ㅚ', pronunciation: 'Oe/We' },
+  { character: 'ㅝ', pronunciation: 'Weo/Wo' },
+  { character: 'ㅞ', pronunciation: 'We' },
+  { character: 'ㅟ', pronunciation: 'Wi' },
+  { character: 'ㅢ', pronunciation: 'Ui/Eui' }
+];
+
   
 
 const TOTAL_QUESTIONS = 10;

@@ -68,7 +68,7 @@ export default function CommunityPage() {
           className="text-4xl font-bold mb-8 text-center bg-clip-text " 
           variants={itemVariants}
         >
-          Komunitas Pejuang Korea
+          Komunitas PejuangKorea
         </motion.h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
           <motion.div variants={itemVariants}>

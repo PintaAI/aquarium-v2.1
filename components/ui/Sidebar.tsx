@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Home, BookOpen, UserCircle, ChevronsLeft, FileText, Settings, LogOut } from 'lucide-react';
+import { Home, BookOpen, UserCircle, ChevronsLeft, FileText, Settings, LogOut, Gamepad } from 'lucide-react';
 import { Button } from './button';
 import { ScrollArea } from './scroll-area';
 import { Avatar, AvatarImage, AvatarFallback } from './avatar';
@@ -23,6 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, session, ...props }) => {
     { icon: Home, label: 'Home', href: '/' },
     { icon: BookOpen, label: 'Courses', href: '/courses' },
     { icon: FileText, label: 'Articles', href: '/articles' },
+    { icon: Gamepad, label: 'Games', href: '/home' },
   ];
 
   return (
@@ -40,7 +41,6 @@ const Sidebar: React.FC<SidebarProps> = ({ className, session, ...props }) => {
             <Image
               src="/images/logo-text.png"
               alt="Logo"
-              width={250}
               height={100}
               className="rounded-lg cursor-pointer"
             />
