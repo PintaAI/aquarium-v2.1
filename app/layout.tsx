@@ -7,7 +7,7 @@ import { auth } from "@/auth";
 import { Outfit } from 'next/font/google';
 import MobileNavbar from "@/components/ui/MobileNavbar";
 import { TooltipProvider } from "@/components/ui/tooltip";
-
+import { Analytics } from "@vercel/analytics/react"
 const outfit = Outfit({
   subsets: ['latin'],
   variable: '--font-outfit',
@@ -68,6 +68,7 @@ export default async function RootLayout({
             </TooltipProvider>
           </ThemeProvider>
         </SessionProvider>
+        <Analytics />
       </body>
     </html>
   );

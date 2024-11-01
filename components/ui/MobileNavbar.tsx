@@ -15,6 +15,11 @@ const MobileNavbar: React.FC<MobileNavbarProps> = ({ className }) => {
   const user = UseCurrentUser();
   const pathname = usePathname();
 
+  // Hide navbar on vocabulary game route
+  if (pathname === "/games/vocabulary") {
+    return null;
+  }
+
   const menuItems = [
     { icon: Gamepad, label: 'Games', href: '/home' },
     { icon: Users, label: 'Community', href: '/community' },

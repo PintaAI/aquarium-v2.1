@@ -17,6 +17,32 @@ interface DictionaryResult {
   definition: string;
 }
 
+export type Difficulty = 'easy' | 'normal' | 'hard';
+
+const DIFFICULTY_SETTINGS = {
+  easy: {
+    maxWords: 3,
+    spawnInterval: 4000,
+    baseSpeed: 0.3,
+    maxSpeed: 0.8,
+    scoreMultiplier: 1
+  },
+  normal: {
+    maxWords: 5,
+    spawnInterval: 3000,
+    baseSpeed: 0.5,
+    maxSpeed: 1.5,
+    scoreMultiplier: 2
+  },
+  hard: {
+    maxWords: 7,
+    spawnInterval: 2000,
+    baseSpeed: 0.8,
+    maxSpeed: 2.0,
+    scoreMultiplier: 3
+  }
+};
+
 interface GameState {
   fallingWords: WordWithPosition[];
   userInput: string;
@@ -31,6 +57,7 @@ interface GameState {
   searchResults: DictionaryResult[];
   isSearching: boolean;
   gameAreaHeight: number;
+  difficulty: Difficulty;
 }
 
 const presetWordList: Word[] = [
@@ -60,7 +87,8 @@ export function useFallingWordGame() {
     dictionarySearch: '',
     searchResults: [],
     isSearching: false,
-    gameAreaHeight: 0
+    gameAreaHeight: 0,
+    difficulty: 'normal'
   });
 
   const getWordList = () => state.isUsingCustomWords ? state.customWords : presetWordList;
@@ -126,10 +154,16 @@ export function useFallingWordGame() {
     if (matchedWord) {
       setState(prev => ({
         ...prev,
-        score: prev.score + 1,
+        score: prev.score + (1 * DIFFICULTY_SETTINGS[prev.difficulty].scoreMultiplier),
         fallingWords: prev.fallingWords.filter(w => w.id !== matchedWord.id),
         userInput: ''
       }));
+    }
+  };
+
+  const setDifficulty = (difficulty: Difficulty) => {
+    if (!state.gameStarted) {
+      setState(prev => ({ ...prev, difficulty }));
     }
   };
 
@@ -182,20 +216,21 @@ export function useFallingWordGame() {
     setState(prev => ({ ...prev, isUsingCustomWords: using }));
   };
 
-  // Add new words every 3 seconds
+  // Add new words based on difficulty settings
   useEffect(() => {
     if (!state.gameStarted || state.gameOver) return;
 
+    const settings = DIFFICULTY_SETTINGS[state.difficulty];
     const wordList = getWordList();
     const addWordInterval = setInterval(() => {
       const unusedWords = wordList.filter(word => 
         !state.fallingWords.some(falling => falling.id === word.id)
       );
       
-      if (unusedWords.length > 0 && state.fallingWords.length < 5) {
+      if (unusedWords.length > 0 && state.fallingWords.length < settings.maxWords) {
         const randomWord = unusedWords[Math.floor(Math.random() * unusedWords.length)];
         const positionX = Math.floor(Math.random() * (80 - 20 + 1) + 20);
-        const speed = Math.random() * (1.5 - 0.5) + 0.5;
+        const speed = Math.random() * (settings.maxSpeed - settings.baseSpeed) + settings.baseSpeed;
         
         const newWord = { 
           ...randomWord, 
@@ -209,10 +244,10 @@ export function useFallingWordGame() {
           fallingWords: [...prev.fallingWords, newWord]
         }));
       }
-    }, 3000);
+    }, settings.spawnInterval);
 
     return () => clearInterval(addWordInterval);
-  }, [state.gameStarted, state.gameOver]);
+  }, [state.gameStarted, state.gameOver, state.difficulty]);
 
   // Move words down and check for ground collision
   useEffect(() => {
@@ -285,7 +320,8 @@ export function useFallingWordGame() {
       setDictionarySearch,
       setIsUsingCustomWords,
       searchDictionary,
-      setGameAreaHeight
+      setGameAreaHeight,
+      setDifficulty
     }
   };
 }

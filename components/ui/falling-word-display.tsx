@@ -5,6 +5,9 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { VirtualKeyboard } from '@/components/ui/virtual-keyboard';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Difficulty } from '@/hooks/use-falling-word-game';
 
 interface Word {
   id: number;
@@ -36,6 +39,7 @@ interface FallingWordDisplayProps {
   dictionarySearch: string;
   searchResults: DictionaryResult[];
   isSearching: boolean;
+  difficulty: Difficulty;
   onInputChange: (value: string) => void;
   onStart: () => void;
   onDialogOpenChange: (open: boolean) => void;
@@ -46,6 +50,7 @@ interface FallingWordDisplayProps {
   onRemoveCustomWord: (id: number) => void;
   onUseCustomWords: (use: boolean) => void;
   onSetGameAreaHeight: (height: number) => void;
+  onDifficultyChange: (difficulty: Difficulty) => void;
 }
 
 export function FallingWordDisplay({
@@ -61,6 +66,7 @@ export function FallingWordDisplay({
   dictionarySearch,
   searchResults,
   isSearching,
+  difficulty,
   onInputChange,
   onStart,
   onDialogOpenChange,
@@ -71,10 +77,12 @@ export function FallingWordDisplay({
   onRemoveCustomWord,
   onUseCustomWords,
   onSetGameAreaHeight,
+  onDifficultyChange,
 }: FallingWordDisplayProps) {
   const [newTerm, setNewTerm] = useState('');
   const [newDefinition, setNewDefinition] = useState('');
   const gameAreaRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   const handleAddCustomWord = () => {
     onAddCustomWord(newTerm, newDefinition);
@@ -82,28 +90,39 @@ export function FallingWordDisplay({
     setNewDefinition('');
   };
 
-  // Update game area height when component mounts or window resizes
   useEffect(() => {
-    const updateGameAreaHeight = () => {
-      if (gameAreaRef.current) {
-        onSetGameAreaHeight(gameAreaRef.current.clientHeight);
-      }
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
     };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
-    updateGameAreaHeight();
-    window.addEventListener('resize', updateGameAreaHeight);
+  // Update game area height only when the ref or window size changes
+  useEffect(() => {
+    if (!gameAreaRef.current) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      const height = entries[0]?.contentRect.height;
+      if (height) {
+        onSetGameAreaHeight(height);
+      }
+    });
+
+    resizeObserver.observe(gameAreaRef.current);
 
     return () => {
-      window.removeEventListener('resize', updateGameAreaHeight);
+      resizeObserver.disconnect();
     };
   }, [onSetGameAreaHeight]);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-10rem)] w-full max-w-2xl mx-auto">
-      <Card className="w-full h-full flex flex-col">
+    <div className="h-[calc(100vh-3rem)] flex max-w-4xl mx-auto flex-col">
+      <Card className="flex-1 p-2 sm:p-4">
         <CardHeader className="flex-shrink-0 p-1">
           <div className="flex justify-between items-center">
-            <h2 className=" text-sm md:text-2xl font-bold">Tangkap Kosa Kata</h2>
+            <h2 className="text-sm md:text-2xl font-bold">Tangkap Kosa Kata</h2>
             <div className="flex gap-4">
               <span className="md:font-medium text-sm">Score: {score}</span>
               <span className="md:font-medium text-sm">Time: {timer}s</span>
@@ -111,16 +130,15 @@ export function FallingWordDisplay({
           </div>
         </CardHeader>
 
-        <CardContent className="flex-1 flex flex-col h-full m:p-4 p-0 gap-4">
+        <CardContent className="p-0 flex flex-col h-[calc(100%-2.5rem)]">
           <div 
             ref={gameAreaRef}
-            className="game-area relative flex-shrink-0 h-[50vh] md:flex-1 md:h-auto border-2 rounded-lg overflow-hidden"
+            className="game-area relative flex-1 border-2 rounded-lg overflow-hidden"
             style={{ 
               borderColor: 'var(--border)',
               background: 'var(--background)'
             }}
           >
-            {/* Ground line */}
             <div 
               className="absolute w-full border-t-2 border-destructive"
               style={{ 
@@ -130,7 +148,6 @@ export function FallingWordDisplay({
               }}
             />
             
-            {/* Ground zone indicator */}
             <div 
               className="absolute w-full bg-destructive/10"
               style={{ 
@@ -157,6 +174,20 @@ export function FallingWordDisplay({
 
             {!gameStarted && !gameOver && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm gap-4">
+                <Select
+                  value={difficulty}
+                  onValueChange={(value) => onDifficultyChange(value as Difficulty)}
+                >
+                  <SelectTrigger className="w-[180px] mb-4">
+                    <SelectValue placeholder="Select difficulty" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="easy">Easy</SelectItem>
+                    <SelectItem value="normal">Normal</SelectItem>
+                    <SelectItem value="hard">Hard</SelectItem>
+                  </SelectContent>
+                </Select>
+
                 <Dialog open={dialogOpen} onOpenChange={onDialogOpenChange}>
                   <DialogTrigger asChild>
                     <Button variant="outline" className="mb-4">
@@ -168,7 +199,6 @@ export function FallingWordDisplay({
                       <DialogTitle>Tambahkan dan Cari kosakata</DialogTitle>
                     </DialogHeader>
                     <div className="flex flex-col gap-4">
-                      {/* Dictionary Search */}
                       <div className="flex gap-2">
                         <Input
                           placeholder="Search Korean Dictionary..."
@@ -183,7 +213,6 @@ export function FallingWordDisplay({
                         </Button>
                       </div>
 
-                      {/* Dictionary Results */}
                       {searchResults.length > 0 && (
                         <div className="space-y-2 border rounded p-2">
                           <h3 className="font-semibold">Dictionary Results:</h3>
@@ -202,7 +231,6 @@ export function FallingWordDisplay({
                         </div>
                       )}
 
-                      {/* Manual Word Addition */}
                       <div className="flex gap-2">
                         <Input
                           placeholder="Term (e.g., 안녕하세요)"
@@ -217,7 +245,6 @@ export function FallingWordDisplay({
                         <Button onClick={handleAddCustomWord}>Add</Button>
                       </div>
 
-                      {/* Custom Words List */}
                       <div className="space-y-2">
                         <h3 className="font-semibold">Your Custom Words:</h3>
                         {customWords.map((word) => (
@@ -286,17 +313,26 @@ export function FallingWordDisplay({
               </div>
             )}
           </div>
-          
-          <div className="flex-shrink-0">
+
+          <div className="p-2 border-t bg-background">
             <Input
               type="text"
               value={userInput}
               onChange={(e) => onInputChange(e.target.value)}
               placeholder="Type the translation here..."
-              className="w-full"
+              className="w-full mb-2"
               disabled={!gameStarted || gameOver}
               autoFocus
             />
+
+            {isMobile && gameStarted && !gameOver && (
+              <VirtualKeyboard
+                onInputChange={onInputChange}
+                userInput={userInput}
+                gameStarted={gameStarted}
+                gameOver={gameOver}
+              />
+            )}
           </div>
         </CardContent>
       </Card>
