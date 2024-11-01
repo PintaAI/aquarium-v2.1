@@ -99,7 +99,6 @@ export function FallingWordDisplay({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Update game area height only when the ref or window size changes
   useEffect(() => {
     if (!gameAreaRef.current) return;
 
@@ -161,19 +160,34 @@ export function FallingWordDisplay({
             {fallingWords.map((word) => (
               <div
                 key={`${word.id}-${word.positionY}`}
-                className="absolute px-3 py-1 bg-primary text-primary-foreground rounded-md shadow-md"
+                className={`
+                  absolute transform
+                  px-2 py-0.5 md:px-3 md:py-1
+                  text-xs md:text-base
+                  bg-primary text-primary-foreground 
+                  rounded-md shadow-md
+                  transition-all duration-200
+                `}
                 style={{
                   top: `${word.positionY}px`,
                   left: `${word.positionX}%`,
                   transform: 'translateX(-50%)',
+                  fontSize: isMobile ? '0.75rem' : '1rem',
+                  minWidth: isMobile ? '60px' : '80px',
                 }}
               >
                 {word.term}
               </div>
             ))}
 
-            {!gameStarted && !gameOver && (
+            {(!gameStarted || gameOver) && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm gap-4">
+                {gameOver && (
+                  <h3 className="text-2xl font-semibold mb-4">
+                    Game Selesai! Score: {score}
+                  </h3>
+                )}
+                
                 <Select
                   value={difficulty}
                   onValueChange={(value) => onDifficultyChange(value as Difficulty)}
@@ -292,23 +306,7 @@ export function FallingWordDisplay({
                   className="text-lg px-8"
                   disabled={isUsingCustomWords && customWords.length === 0}
                 >
-                  Start Game
-                </Button>
-              </div>
-            )}
-
-            {gameOver && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm gap-4">
-                <h3 className="text-2xl font-semibold">
-                  Game Selesai! Score: {score}
-                </h3>
-                <Button 
-                  onClick={onStart}
-                  size="lg"
-                  className="text-lg px-8"
-                  disabled={isUsingCustomWords && customWords.length === 0}
-                >
-                  Main Lagi?
+                  {gameOver ? 'Main Lagi?' : 'Start Game'}
                 </Button>
               </div>
             )}

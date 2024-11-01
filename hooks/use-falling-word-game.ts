@@ -222,12 +222,24 @@ export function useFallingWordGame() {
 
     const settings = DIFFICULTY_SETTINGS[state.difficulty];
     const wordList = getWordList();
-    const addWordInterval = setInterval(() => {
-      const unusedWords = wordList.filter(word => 
-        !state.fallingWords.some(falling => falling.id === word.id)
-      );
-      
-      if (unusedWords.length > 0 && state.fallingWords.length < settings.maxWords) {
+
+    // Only spawn new words if we're under the max word limit
+    const spawnInterval = setInterval(() => {
+      setState(prev => {
+        // Check if we're at or over the max word limit
+        if (prev.fallingWords.length >= settings.maxWords) {
+          return prev;
+        }
+
+        // Get words that aren't currently falling
+        const unusedWords = wordList.filter(word => 
+          !prev.fallingWords.some(falling => falling.id === word.id)
+        );
+        
+        if (unusedWords.length === 0) {
+          return prev;
+        }
+
         const randomWord = unusedWords[Math.floor(Math.random() * unusedWords.length)];
         const positionX = Math.floor(Math.random() * (80 - 20 + 1) + 20);
         const speed = Math.random() * (settings.maxSpeed - settings.baseSpeed) + settings.baseSpeed;
@@ -239,14 +251,14 @@ export function useFallingWordGame() {
           speed 
         };
 
-        setState(prev => ({
+        return {
           ...prev,
           fallingWords: [...prev.fallingWords, newWord]
-        }));
-      }
+        };
+      });
     }, settings.spawnInterval);
 
-    return () => clearInterval(addWordInterval);
+    return () => clearInterval(spawnInterval);
   }, [state.gameStarted, state.gameOver, state.difficulty]);
 
   // Move words down and check for ground collision
