@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface Word {
@@ -102,18 +101,17 @@ export function FallingWordDisplay({
   return (
     <div className="flex flex-col h-[calc(100vh-10rem)] w-full max-w-2xl mx-auto">
       <Card className="w-full h-full flex flex-col">
-        <CardHeader className="flex-shrink-0">
+        <CardHeader className="flex-shrink-0 p-1">
           <div className="flex justify-between items-center">
             <h2 className=" text-sm md:text-2xl font-bold">Tangkap Kosa Kata</h2>
             <div className="flex gap-4">
-              <span className="font-medium">Score: {score}</span>
-              <span className="font-medium">Time: {timer}s</span>
+              <span className="md:font-medium text-sm">Score: {score}</span>
+              <span className="md:font-medium text-sm">Time: {timer}s</span>
             </div>
           </div>
-          <Progress value={(timer / 120) * 100} className="mt-2" />
         </CardHeader>
 
-        <CardContent className="flex-1 flex flex-col h-full p-4 gap-4">
+        <CardContent className="flex-1 flex flex-col h-full m:p-4 p-0 gap-4">
           <div 
             ref={gameAreaRef}
             className="game-area relative flex-shrink-0 h-[50vh] md:flex-1 md:h-auto border-2 rounded-lg overflow-hidden"

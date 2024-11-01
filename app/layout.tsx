@@ -59,7 +59,7 @@ export default async function RootLayout({
             <TooltipProvider>
               <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/30 via-background to-secondary/30 text-foreground">
                 <div className="flex flex-grow">   
-                  <main className="flex-grow overflow-y-auto pb-16 md:pb-0">
+                  <main className="flex-grow overflow-y-auto">
                     {children}
                   </main>
                 </div>

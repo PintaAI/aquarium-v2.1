@@ -41,6 +41,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, session, ...props }) => {
             <Image
               src="/images/logo-text.png"
               alt="Logo"
+              width={100}
               height={100}
               className="rounded-lg cursor-pointer"
             />
