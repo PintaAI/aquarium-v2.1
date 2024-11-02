@@ -49,7 +49,7 @@ const HeroSectionContent: React.FC<HeroSectionContentProps> = ({ handleStartCour
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           Platform belajar bahasa Korea dan penghubung komunitas Indonesia di Korea Selatan. 
-          Kami membantu Anda mewujudkan impian bekerja di Korea melalui proses G2G yang aman dan terpe
+          Kami membantu Anda mewujudkan impian bekerja di Korea melalui proses G2G yang aman dan terpercaya.
         </motion.p>
         <motion.div
           className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4"
