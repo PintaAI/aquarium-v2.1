@@ -1,4 +1,4 @@
-import { google } from "@ai-sdk/google"
+import { openai } from "@ai-sdk/openai"
 import { generateObject } from 'ai';
 import { z } from 'zod';
 
@@ -18,7 +18,7 @@ export async function POST() {
 
   try {
     const result = await generateObject({
-      model: google('gemini-1.5-flash-latest'),
+      model: openai('gpt-4o-mini'),
       schema: QuestionsSchema,
       messages: [
         {
