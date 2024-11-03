@@ -1,14 +1,15 @@
-"use client";
+'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { VirtualKeyboard } from '@/components/ui/virtual-keyboard';
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { VirtualKeyboard } from "@/components/ui/virtual-keyboard";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Difficulty } from '@/hooks/use-falling-word-game';
-import { PresetListType, PRESET_LISTS } from '@/data/word-lists';
+import { Difficulty } from '../hooks/use-falling-word-game';
+import { PresetListType, PRESET_LISTS } from '../data/word-lists';
+import SpaceBackground from './space-background';
 
 interface Word {
   id: number;
@@ -123,8 +124,8 @@ export function FallingWordDisplay({
 
   return (
     <div className="h-[calc(100vh-3rem)] flex max-w-4xl mx-auto flex-col">
-      <Card className="flex-1 p-2 sm:p-4">
-        <CardHeader className="flex-shrink-0 p-1">
+      <Card className="flex-1 p-2 sm:p-4 relative overflow-hidden">
+        <div className="flex-shrink-0 p-1 relative z-10">
           <div className="flex justify-between items-center">
             <h2 className="text-sm md:text-2xl font-bold">Tangkap Kosa Kata</h2>
             <div className="flex gap-4">
@@ -132,17 +133,18 @@ export function FallingWordDisplay({
               <span className="md:font-medium text-sm">Time: {timer}s</span>
             </div>
           </div>
-        </CardHeader>
+        </div>
 
-        <CardContent className="p-0 flex flex-col h-[calc(100%-2.5rem)]">
+        <div className="p-0 flex flex-col h-[calc(100%-2.5rem)] relative z-10">
           <div 
             ref={gameAreaRef}
             className="game-area relative flex-1 border-2 rounded-lg overflow-hidden"
             style={{ 
               borderColor: 'var(--border)',
-              background: 'var(--background)'
             }}
           >
+            <SpaceBackground />
+            
             <div 
               className="absolute w-full border-t-2 border-destructive"
               style={{ 
@@ -335,7 +337,7 @@ export function FallingWordDisplay({
             )}
           </div>
 
-          <div className="p-2 border-t bg-background">
+          <div className="p-2 border-t bg-background relative z-10">
             <Input
               type="text"
               value={userInput}
@@ -355,7 +357,7 @@ export function FallingWordDisplay({
               />
             )}
           </div>
-        </CardContent>
+        </div>
       </Card>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
-import { useFallingWordGame } from '@/hooks/use-falling-word-game';
-import { FallingWordDisplay } from '@/components/ui/falling-word-display';
+import { useFallingWordGame } from '../hooks/use-falling-word-game';
+import { FallingWordDisplay } from './falling-word-display';
 
 export default function FallingWordsGame() {
   const { state, actions } = useFallingWordGame();

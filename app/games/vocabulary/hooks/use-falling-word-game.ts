@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { PRESET_LISTS, PresetListType } from '@/data/word-lists';
+import { PRESET_LISTS, PresetListType } from '../data/word-lists';
 
 interface Word {
   id: number;
@@ -142,6 +142,10 @@ export function useFallingWordGame() {
     );
 
     if (matchedWord) {
+      // Play the sound
+      const audio = new Audio('/sound/benar.mp3');
+      audio.play();
+
       setState(prev => ({
         ...prev,
         score: prev.score + (1 * DIFFICULTY_SETTINGS[prev.difficulty].scoreMultiplier),
