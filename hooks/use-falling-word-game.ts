@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { PRESET_LISTS, PresetListType } from '@/data/word-lists';
 
 interface Word {
   id: number;
@@ -58,20 +59,8 @@ interface GameState {
   isSearching: boolean;
   gameAreaHeight: number;
   difficulty: Difficulty;
+  selectedWordList: PresetListType;
 }
-
-const presetWordList: Word[] = [
-  { id: 1, term: '안녕하세요', definition: 'hello' },
-  { id: 2, term: '감사합니다', definition: 'terima kasih' },
-  { id: 3, term: '사랑해요', definition: 'aku cinta kamu' },
-  { id: 4, term: '미안해요', definition: 'maaf' },
-  { id: 5, term: '잘자요', definition: 'selamat tidur' },
-  { id: 6, term: '맛있어요', definition: 'enak' },
-  { id: 7, term: '좋아요', definition: 'suka' },
-  { id: 8, term: '화이팅', definition: 'semangat' },
-  { id: 9, term: '괜찮아요', definition: 'tidak apa-apa' },
-  { id: 10, term: '재미있어요', definition: 'menyenangkan' },
-];
 
 export function useFallingWordGame() {
   const [state, setState] = useState<GameState>({
@@ -88,10 +77,11 @@ export function useFallingWordGame() {
     searchResults: [],
     isSearching: false,
     gameAreaHeight: 0,
-    difficulty: 'normal'
+    difficulty: 'normal',
+    selectedWordList: 'basic'
   });
 
-  const getWordList = () => state.isUsingCustomWords ? state.customWords : presetWordList;
+  const getWordList = () => state.isUsingCustomWords ? state.customWords : PRESET_LISTS[state.selectedWordList].words;
 
   const setGameAreaHeight = (height: number) => {
     setState(prev => ({ ...prev, gameAreaHeight: height }));
@@ -167,6 +157,12 @@ export function useFallingWordGame() {
     }
   };
 
+  const setSelectedWordList = (wordList: PresetListType) => {
+    if (!state.gameStarted) {
+      setState(prev => ({ ...prev, selectedWordList: wordList }));
+    }
+  };
+
   const addCustomWord = (term: string, definition: string) => {
     if (term.trim() && definition.trim()) {
       setState(prev => ({
@@ -223,15 +219,12 @@ export function useFallingWordGame() {
     const settings = DIFFICULTY_SETTINGS[state.difficulty];
     const wordList = getWordList();
 
-    // Only spawn new words if we're under the max word limit
     const spawnInterval = setInterval(() => {
       setState(prev => {
-        // Check if we're at or over the max word limit
         if (prev.fallingWords.length >= settings.maxWords) {
           return prev;
         }
 
-        // Get words that aren't currently falling
         const unusedWords = wordList.filter(word => 
           !prev.fallingWords.some(falling => falling.id === word.id)
         );
@@ -265,7 +258,7 @@ export function useFallingWordGame() {
   useEffect(() => {
     if (!state.gameStarted || state.gameOver || !state.gameAreaHeight) return;
 
-    const groundLevel = state.gameAreaHeight - 50; // 50px above bottom for the danger zone
+    const groundLevel = state.gameAreaHeight - 50;
 
     const moveWordsInterval = setInterval(() => {
       setState(prev => {
@@ -274,7 +267,6 @@ export function useFallingWordGame() {
           positionY: word.positionY + word.speed
         }));
 
-        // Check if any word has hit the ground line
         const hasWordHitGround = updatedWords.some(word => word.positionY >= groundLevel);
 
         if (hasWordHitGround) {
@@ -322,6 +314,7 @@ export function useFallingWordGame() {
 
   return {
     state,
+    presetWordLists: PRESET_LISTS,
     actions: {
       startGame,
       handleInputChange,
@@ -333,7 +326,8 @@ export function useFallingWordGame() {
       setIsUsingCustomWords,
       searchDictionary,
       setGameAreaHeight,
-      setDifficulty
+      setDifficulty,
+      setSelectedWordList
     }
   };
 }

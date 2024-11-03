@@ -21,6 +21,7 @@ export default function FallingWordsGame() {
       searchResults={state.searchResults}
       isSearching={state.isSearching}
       difficulty={state.difficulty}
+      selectedWordList={state.selectedWordList}
       onInputChange={actions.handleInputChange}
       onStart={actions.startGame}
       onDialogOpenChange={actions.setDialogOpen}
@@ -32,6 +33,7 @@ export default function FallingWordsGame() {
       onUseCustomWords={actions.setIsUsingCustomWords}
       onSetGameAreaHeight={actions.setGameAreaHeight}
       onDifficultyChange={actions.setDifficulty}
+      onWordListChange={actions.setSelectedWordList}
     />
   );
 }

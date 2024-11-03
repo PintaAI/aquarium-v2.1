@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { VirtualKeyboard } from '@/components/ui/virtual-keyboard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Difficulty } from '@/hooks/use-falling-word-game';
+import { PresetListType, PRESET_LISTS } from '@/data/word-lists';
 
 interface Word {
   id: number;
@@ -40,6 +41,7 @@ interface FallingWordDisplayProps {
   searchResults: DictionaryResult[];
   isSearching: boolean;
   difficulty: Difficulty;
+  selectedWordList: PresetListType;
   onInputChange: (value: string) => void;
   onStart: () => void;
   onDialogOpenChange: (open: boolean) => void;
@@ -51,6 +53,7 @@ interface FallingWordDisplayProps {
   onUseCustomWords: (use: boolean) => void;
   onSetGameAreaHeight: (height: number) => void;
   onDifficultyChange: (difficulty: Difficulty) => void;
+  onWordListChange: (wordList: PresetListType) => void;
 }
 
 export function FallingWordDisplay({
@@ -67,6 +70,7 @@ export function FallingWordDisplay({
   searchResults,
   isSearching,
   difficulty,
+  selectedWordList,
   onInputChange,
   onStart,
   onDialogOpenChange,
@@ -78,6 +82,7 @@ export function FallingWordDisplay({
   onUseCustomWords,
   onSetGameAreaHeight,
   onDifficultyChange,
+  onWordListChange,
 }: FallingWordDisplayProps) {
   const [newTerm, setNewTerm] = useState('');
   const [newDefinition, setNewDefinition] = useState('');
@@ -188,23 +193,41 @@ export function FallingWordDisplay({
                   </h3>
                 )}
                 
-                <Select
-                  value={difficulty}
-                  onValueChange={(value) => onDifficultyChange(value as Difficulty)}
-                >
-                  <SelectTrigger className="w-[180px] mb-4">
-                    <SelectValue placeholder="Select difficulty" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="easy">Easy</SelectItem>
-                    <SelectItem value="normal">Normal</SelectItem>
-                    <SelectItem value="hard">Hard</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex flex-col gap-4 items-center">
+                  <Select
+                    value={difficulty}
+                    onValueChange={(value) => onDifficultyChange(value as Difficulty)}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select difficulty" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="easy">Easy</SelectItem>
+                      <SelectItem value="normal">Normal</SelectItem>
+                      <SelectItem value="hard">Hard</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select
+                    value={selectedWordList}
+                    onValueChange={(value) => onWordListChange(value as PresetListType)}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select word list" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(PRESET_LISTS).map(([key, list]) => (
+                        <SelectItem key={key} value={key}>
+                          {list.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
                 <Dialog open={dialogOpen} onOpenChange={onDialogOpenChange}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" className="mb-4">
+                    <Button variant="outline" className="mt-4">
                       {isUsingCustomWords ? 'Edit Kosa-kata' : 'Pilih Kosa-kata'}
                     </Button>
                   </DialogTrigger>
@@ -303,7 +326,7 @@ export function FallingWordDisplay({
                 <Button 
                   onClick={onStart}
                   size="lg"
-                  className="text-lg px-8"
+                  className="text-lg px-8 mt-4"
                   disabled={isUsingCustomWords && customWords.length === 0}
                 >
                   {gameOver ? 'Main Lagi?' : 'Start Game'}
